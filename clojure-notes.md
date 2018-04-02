@@ -107,6 +107,18 @@ to get the nth element.
 (get [4 5 6 7] 2)
 => 6
 ```
+### Lists of Maps
+#### Conditionally accumumulating data from a list of maps into a list
+Sometimes you have a list of maps and you want to conditionlly extract maps from the list which have
+certain criteria. For example let's say I have this list of maps:
+```clojure
+[{:name "Fred" :id 2} {:name "Steve" :id 12} {:name "Bill" :id 43}]
+```
+And I want to get the values for :name whose id is greater than 10
+```
+(remove nil? (for [d dat]
+    (when (< 10 (:id d)) (:name d))))
+```
 ### Queues
 LIFO implementation.
 ```
