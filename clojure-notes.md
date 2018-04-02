@@ -115,7 +115,7 @@ certain criteria. For example let's say I have this list of maps:
 [{:name "Fred" :id 2} {:name "Steve" :id 12} {:name "Bill" :id 43}]
 ```
 And I want to get the values for :name whose id is greater than 10
-```
+```clojure
 (remove nil? (for [d dat]
     (when (< 10 (:id d)) (:name d))))
 ```
