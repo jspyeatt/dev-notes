@@ -4,7 +4,7 @@ My notes on how to use clojure
 ## Maps
 
 ### Retrieving a value from a map
-```
+```clojure
 (def m {:first "John" :last "Pyeatt :age 54})
 (:last m)
 => "Pyeatt"
@@ -118,6 +118,10 @@ And I want to get the values for :name whose id is greater than 10
 ```clojure
 (remove nil? (for [d dat]
     (when (< 10 (:id d)) (:name d))))
+```
+result
+```clojure
+("Steve" "Bill")
 ```
 ### Queues
 LIFO implementation.
