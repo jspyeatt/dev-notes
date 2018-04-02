@@ -10,35 +10,35 @@ My notes on how to use clojure
 => "Pyeatt"
 ```
 ### Merging the contents of two maps together
-```
+```clojure
 (merge {:firstname "John" :lastname "Pyeatt" :age 54} {:lastname "Smith" :height 74})
 
 => {:firstname "John", :lastname "Smith", :age 54, :height 74}
 ```
 ### Adding values to a map
-```
+```clojure
 (assoc {:first "John" :last "Smith"} :last "Pyeatt" :age 54 )
 => {:first "John", :last "Pyeatt", :age 54}
 ```
 ### Removing values from a map
-```
+```clojure
 (dissoc {:first "John" :last "Pyeatt" :age 54} :middle :last)
 => {:first "John", :age 54}
 ```
 ### Modifying a value in a map with a function
-```
+```clojure
 (update {:first "John" :age 54} :age inc)
 => {:first "John", :age 55}
 ```
 ### Returning a subset of map values
-```
+```clojure
 (select-keys {:male true :age 24 :name "Steve"} [:male :age])
 => {:male true, :age 24}
 ```
 ## Sets
 
 ### Does a value exist in a set
-```
+```clojure
 (contains? #{"john" :male 54 :tall} :male)
 => true
 ```
@@ -49,7 +49,7 @@ For sequential data you have lists and vectors.
 
 ### map function
 The map function applies a function to every value in a collection. Returns a lazy sequence.
-```
+```clojure
 (defn divide-by-2
   [n]
   (/ n 2))
@@ -58,19 +58,19 @@ The map function applies a function to every value in a collection. Returns a la
 => (4 6 8)
 ```
 #### Extract a particular map key value from a collection of maps
-```
+```clojure
 (map :first [{:first "John" :last "Pyeatt"} {:first "Betsey" :last "Davis"}])
 => ("John" "Betsey")```
 ```
 ### reduce function
 Applies a function to a sequence of values and reduces those values to one value based on the function.
-```
+```clojure
 (reduce + 0 [4 5 7 9])
 => 25
 ```
 
 ### removing values from a sequence with filter
-```
+```clojure
 (defn greater-than-10
   [v]
   (< 10 v))
@@ -79,14 +79,14 @@ Applies a function to a sequence of values and reduces those values to one value
 => (23 43)
 ```
 or
-```
+```clojure
 (filter (fn [v] (< 10 v)) [4 10 23 43 2])
 => (23 43)
 ```
 ### removing values from a sequence of maps by value with filter
 Use this option when you need to vary the filtering value (i.e. you need to define
 a function that takes 2 args, then reference it in your (partial) call.
-```
+```clojure
 (defn find-by-id? [id m]
   (= (:id m) id))
 (let [m-list [{:id 1 :name "One"} {:id 2 :name "two"} {:id 3 :name "three"}]]
@@ -103,7 +103,7 @@ of the list. When you use `conj` it will add new elements to the front of a list
 ### Vectors
 Vectors are like arrays. You use them when you want to add to the end of a vector, again using `conj`. Or when you need
 to get the nth element.
-```
+```clojure
 (get [4 5 6 7] 2)
 => 6
 ```
@@ -125,7 +125,7 @@ result
 ```
 ### Queues
 LIFO implementation.
-```
+```clojure
 (def new-orders clojure.lang.PersistentQueue/EMPTY)
 (defn add-order [orders order]
    (conj orders order))
@@ -137,18 +137,18 @@ LIFO implementation.
 ### Misc functions
 
 #### concat - concatonates multiple collections and returns a new lazy sequence
-```
+```clojure
 (concat [4 5 6] [9 8 7])
 => (4 5 6 9 8 7)
 ```
 #### first - returns the first element of a list or vector
-```
+```clojure
 (first [4 5 6])
 => 4
 ```
 #### rest - returns all but the first element of a list or vector
 Even if you specify a vector for input, the result will be a list.
-```
+```clojure
 (rest [4 5 6])
 => (5 6)
 ```
