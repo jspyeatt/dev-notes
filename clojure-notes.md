@@ -123,6 +123,32 @@ result
 ```clojure
 ("Steve" "Bill")
 ```
+#### mapcat
+Let's say you have a list of maps and you want to return a subset of the list based on some criteria and
+modify the list on output. The combination of (remove) (mapcat) and (for) may be an answer.
+
+```clojure
+(let [src [{:first "John" :last "Pyeatt" :hobbies ["golf", "running"]}
+           {:first "Betsey" :last "Davis" :hobbies ["sewing" "biking" "golf"]}
+           {:first "Sam" :last "Pyeatt" :hobbies ["snowboarding" "swimming"]}]]
+      (remove nil?
+              (mapcat (fn [person]
+                        (for [hobby (:hobbies person)]
+                          (when (= "golf" hobby)
+                            {:name (str (:first person) (:last person)) :sport "golf"}))) src)))
+```
+So working from the inside out.
+1. the (when) checks to see if the person likes golf. If so it creates the output map with :name and :sport as the keywords
+1. the (for) loop checks all of the hobbies
+1. The (fn) defines a function that, given a person map either returns nil or the map with :name and :sport
+1. The (mapcat) calls the (fn) function for each of the elements of src.
+1. The (remove) calls nil? and removes an elements returned by (fn) which are nil
+
+The result from the above call would be
+```clojure
+({:name "JohnPyeatt", :sport "golf"} {:name "BetseyDavis", :sport "golf"})
+```
+
 ### Queues
 LIFO implementation.
 ```clojure
