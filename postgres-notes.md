@@ -34,6 +34,19 @@ CREATE TRIGGER campus_last_updated_at BEFORE UPDATE ON campus
    FOR EACH ROW
       EXECUTE PROCEDURE update_last_updated_at();
 ```
+
+### Updating a value in a row based on another value.
+```
+CREATE OR REPLACE FUNCTION set_deleted_at()
+RETURNS TRIGGER AS $$
+BEGIN
+   IF NEW.is_deleted = TRUE THEN
+      NEW.deleted_at = now();
+   END IF;
+   RETURN NEW;
+END;
+$$ language 'plpgsql';
+```
 ## Performance Tuning
 To do any useful performance tuning you need the [pg_stat_statements](https://www.postgresql.org/docs/current/static/pgstatstatements.html) module installed and also possibly the [postgres
 statistics collector](https://www.postgresql.org/docs/current/static/monitoring-stats.html).
