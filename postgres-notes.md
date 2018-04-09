@@ -17,6 +17,23 @@ pg_dump has several options. The most common ones are:
 ```
 pg_dump -c --if-exists --host= --dbname= --username= -f /tmp/data.sql
 ```
+
+## Stored Procedures and Triggers
+
+### Update a TIMESTAMP each time an update is performed
+```
+CREATE OR REPLACE FUNCTION update_last_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+   NEW.last_updated_at = now();
+   RETURN NEW;
+END;
+$$ language 'plpgsql';
+
+CREATE TRIGGER campus_last_updated_at BEFORE UPDATE ON campus
+   FOR EACH ROW
+      EXECUTE PROCEDURE update_last_updated_at();
+```
 ## Performance Tuning
 To do any useful performance tuning you need the [pg_stat_statements](https://www.postgresql.org/docs/current/static/pgstatstatements.html) module installed and also possibly the [postgres
 statistics collector](https://www.postgresql.org/docs/current/static/monitoring-stats.html).
