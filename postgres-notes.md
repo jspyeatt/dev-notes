@@ -3,10 +3,16 @@ Just my cheating notes for Postgres
 
 ## psql functions
 
-### Timestamp
+### Time
+#### Timestamps
 Using a timestamp offset from the current time.
 ```
 select id, identifier, received_at from alerts where active=false and received_at < current_timestamp - interval '72 hours' order by received_at desc;
+```
+
+#### Return the difference between current time and TIMESTAMP column in hours
+```
+select created_at, secs_to_next_beat, extract(epoch from now() - created_at)/3600 as diff_in_hours from door_event;
 ```
 ### Changing a postgres user password.
 ```
