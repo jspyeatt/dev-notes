@@ -100,16 +100,29 @@ Here's a more complicated example. This is list of maps. Inside each map is a :k
 of the kids names and ages. The code below extracts a list of a each family which has at least 1 kid
 under 19.
 ```clojure
-(let [m [{:family "pyeatt" :kids [{:name "SAM" :age 20} {:name "Gwen" :age 18}]}
-         {:family "gerlach" :kids [{:name "Gina" :age 32} {:name "Billy" :age 27}]}
-         {:family "kerkman" :kids [{:name "emma" :age 14}]}]]
+(let [m [{:family "pyeatt" :kids [{:name "SAM" :age 20 :pets ["cat"]} {:name "Gwen" :age 18 :pets ["rabbit" "fish"]}]}
+         {:family "gerlach" :kids [{:name "Gina" :age 32} {:name "Billy" :age 27 :pets ["cat"]}]}
+         {:family "kerkman" :kids [{:name "emma" :age 14 :pets ["dog"]}]}]]
   (->> m 
        (filter (fn [{:keys [kids]}]
                  (some #(> 19 (:age %)) kids)))))
                  
 ;; returns
-({:family "pyeatt", :kids [{:name "SAM", :age 20} {:name "Gwen", :age 18}]}
- {:family "kerkman", :kids [{:name "emma", :age 14}]})
+({:family "pyeatt", :kids [{:name "SAM", :age 20, :pets ["cat"]} {:name "Gwen", :age 18, :pets ["rabbit" "fish"]}]}
+ {:family "kerkman", :kids [{:name "emma", :age 14, :pets ["dog"]}]})
+```
+Now with the same original value `m` nest one more deep and get the list of families who have cats.
+
+```clojure
+  (->> m 
+       (filter (fn [{:keys [kids]}]
+                 (some #(some (fn [x]
+                                (= x "cat" )) (:pets %)) kids)))))
+```
+returns
+```
+({:family "pyeatt", :kids [{:name "SAM", :age 20, :pets ["cat"]} {:name "Gwen", :age 18, :pets ["rabbit" "fish"]}]}
+ {:family "gerlach", :kids [{:name "Gina", :age 32} {:name "Billy", :age 27, :pets ["cat"]}]})
 ```
 
 ### Lists
