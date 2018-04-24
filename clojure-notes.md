@@ -96,6 +96,22 @@ a function that takes 2 args, then reference it in your (partial) call.
 => => ({:id 2, :name "two"})
 ```
 
+Here's a more complicated example. This is list of maps. Inside each map is a :kids list with a map 
+of the kids names and ages. The code below extracts a list of a each family which has at least 1 kid
+under 19.
+```clojure
+(let [m [{:family "pyeatt" :kids [{:name "SAM" :age 20} {:name "Gwen" :age 18}]}
+         {:family "gerlach" :kids [{:name "Gina" :age 32} {:name "Billy" :age 27}]}
+         {:family "kerkman" :kids [{:name "emma" :age 14}]}]]
+  (->> m 
+       (filter (fn [{:keys [kids]}]
+                 (some #(> 19 (:age %)) kids)))))
+                 
+;; returns
+({:family "pyeatt", :kids [{:name "SAM", :age 20} {:name "Gwen", :age 18}]}
+ {:family "kerkman", :kids [{:name "emma", :age 14}]})
+```
+
 ### Lists
 Lists are implemented as linked lists. For this reason it is easiest to add new elements to the beginning
 of the list. When you use `conj` it will add new elements to the front of a list.
