@@ -21,8 +21,11 @@ alter user <username> with password 'newpassword';
 ### pg_dump
 pg_dump has several options. The most common ones are:
 ```
-pg_dump -c --if-exists --host= --dbname= --username= -f /tmp/data.sql
+pg_dump -C -c --if-exists --host= --dbname= --username= -f /tmp/data.sql
 ```
+1. -C = include the CREATE DATABASE command
+1. -c = clean/drop database  objects before recreating
+1. --if-exists = use IF EXISTS when dropping objects
 
 ## Stored Procedures and Triggers
 
