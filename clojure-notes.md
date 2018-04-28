@@ -129,6 +129,18 @@ returns
 Lists are implemented as linked lists. For this reason it is easiest to add new elements to the beginning
 of the list. When you use `conj` it will add new elements to the front of a list.
 
+#### flatten a list
+```clojure
+(let [big-list [{:name "john" :age 55}
+                {:name "Betsey" :age 53}
+                [{:name "Sam" :age 20} {:name "Gwen" :age 18}]]]
+  (flatten big-list ))
+```
+Results in this
+```clojure
+({:name "john", :age 55} {:name "Betsey", :age 53} {:name "Sam", :age 20} {:name "Gwen", :age 18})
+```
+
 ### Vectors
 Vectors are like arrays. You use them when you want to add to the end of a vector, again using `conj`. Or when you need
 to get the nth element.
