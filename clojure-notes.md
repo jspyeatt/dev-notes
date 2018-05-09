@@ -148,6 +148,28 @@ to get the nth element.
 (get [4 5 6 7] 2)
 => 6
 ```
+
+#### group-by
+```clojure
+(let [src [["aa:aa:bb:aa:aa:00" "Room 100"]
+           ["aa:aa:bb:aa:aa:01" "Room 101"]
+           ["aa:aa:bb:aa:aa:02" "Room 102"]
+           ["aa:aa:bb:aa:aa:03" "Room 103"]
+           ["aa:aa:bb:aa:aa:04" "Room 104"]
+           ["aa:aa:bb:aa:aa:05" "Room 102"]
+           ["aa:aa:bb:aa:aa:01" "Room 106"]]]
+  (group-by first src))
+```
+results in
+```clojure
+{"aa:aa:bb:aa:aa:00" [["aa:aa:bb:aa:aa:00" "Room 100"]],
+ "aa:aa:bb:aa:aa:01" [["aa:aa:bb:aa:aa:01" "Room 101"] ["aa:aa:bb:aa:aa:01" "Room 106"]],
+ "aa:aa:bb:aa:aa:02" [["aa:aa:bb:aa:aa:02" "Room 102"]],
+ "aa:aa:bb:aa:aa:03" [["aa:aa:bb:aa:aa:03" "Room 103"]],
+ "aa:aa:bb:aa:aa:04" [["aa:aa:bb:aa:aa:04" "Room 104"]],
+ "aa:aa:bb:aa:aa:05" [["aa:aa:bb:aa:aa:05" "Room 102"]]}
+
+```
 ### Lists of Maps
 #### Conditionally accumumulating data from a list of maps into a list
 Sometimes you have a list of maps and you want to conditionlly extract maps from the list which have
