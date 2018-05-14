@@ -100,9 +100,13 @@ Here's a more complicated example. This is list of maps. Inside each map is a :k
 of the kids names and ages. The code below extracts a list of a each family which has at least 1 kid
 under 19.
 ```clojure
-(let [m [{:family "pyeatt" :kids [{:name "SAM" :age 20 :pets ["cat"]} {:name "Gwen" :age 18 :pets ["rabbit" "fish"]}]}
-         {:family "gerlach" :kids [{:name "Gina" :age 32} {:name "Billy" :age 27 :pets ["cat"]}]}
-         {:family "kerkman" :kids [{:name "emma" :age 14 :pets ["dog"]}]}]]
+(let [m [{:family "pyeatt" 
+          :kids [{:name "SAM" :age 20 :pets ["cat"]}
+                 {:name "Gwen" :age 18 :pets ["rabbit" "fish"]}]}
+         {:family "gerlach"
+          :kids [{:name "Gina" :age 32} {:name "Billy" :age 27 :pets ["cat"]}]}
+         {:family "kerkman" 
+          :kids [{:name "emma" :age 14 :pets ["dog"]}]}]]
   (->> m 
        (filter (fn [{:keys [kids]}]
                  (some #(> 19 (:age %)) kids)))))
