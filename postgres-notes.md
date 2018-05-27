@@ -3,6 +3,12 @@ Just my cheating notes for Postgres
 
 ## psql functions
 
+### Remove wrapping and '+' character from long string output
+```
+pset format unaligned
+pset expanded off
+```
+
 ### Time
 #### Timestamps
 Using a timestamp offset from the current time.
