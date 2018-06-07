@@ -1,5 +1,10 @@
 # Linux Notes
 
+## What process is holding a port
+```
+netstat -nlp|grep 9000
+```
+
 ## tcpdump
 Can be a very useful command but has a lot of options.
 
