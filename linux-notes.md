@@ -1,0 +1,28 @@
+# Linux Notes
+
+## tcpdump
+Can be a very useful command but has a lot of options.
+
+```
+/usr/sbin/tcpdump -i any -w temp.cap -s 65535 -p port 443 or port 8444 or port 8055 or port 5678
+```
+write the output to `temp.cap`. Set the snapshot `-s`  length to 65535. Send output to stdout `-p`
+along with the .cap file. The last part is the filtering piece. This is the most complicated part
+of the command. Hopefully the example above is pretty obvious what it does.
+
+Other useful commmand line options.
+1. `-i eth0` include only traffic from this interface.
+1. `-c N` capture only N packets
+1. `-A` display packages in ASCII
+1. `-XX` display in ASCII and HEX
+1. `-n` display hosts by IP Address, not DNS
+1. -tttt display human-readable timestamps
+
+
+Some other useful predicates:
+1. `host www.cnn.com` include only traffic with cnn.com
+1. `src 192.168.1.101` capture only packets which originate from 192.168.1.101
+1. `dst 192.168.1.102` capture only packages being sent to 192.168.1.102.
+1. `tcp` capture only tcp traffic
+
+For a complete list of filters go here. (https://linux.die.net/man/7/pcap-filter)[pcap-filters].
