@@ -31,3 +31,8 @@ Some other useful predicates:
 1. `tcp` capture only tcp traffic
 
 For a complete list of filters go here. (https://linux.die.net/man/7/pcap-filter)[pcap-filters].
+
+### Reading a capture file
+```
+tcpdump -r <filename> | less
+```
