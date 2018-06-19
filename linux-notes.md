@@ -2,7 +2,7 @@
 
 ## What process is holding a port
 ```
-netstat -nlp|grep 9000
+netstat -tulpn|grep 9000
 ```
 
 ## tcpdump
