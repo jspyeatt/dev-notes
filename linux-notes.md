@@ -4,6 +4,10 @@
 ```
 netstat -tulpn|grep 9000
 ```
+or
+```
+lsof -i :45002   # substitute your port number
+```
 
 ## tcpdump
 Can be a very useful command but has a lot of options.
