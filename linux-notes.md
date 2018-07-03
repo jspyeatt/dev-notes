@@ -8,7 +8,11 @@ or
 ```
 lsof -i :45002   # substitute your port number
 ```
-
+## Shut off IPv6
+```
+sudo sysctl -w net.ipv6.conf.all.disable_ipv6=1
+sudo sysctl -w net.ipv6.conf.default.disable_ipv6=1
+```
 ## tcpdump
 Can be a very useful command but has a lot of options.
 
