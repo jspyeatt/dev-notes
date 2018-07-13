@@ -17,7 +17,7 @@ sudo sysctl -w net.ipv6.conf.default.disable_ipv6=1
 Can be a very useful command but has a lot of options.
 
 ```
-/usr/sbin/tcpdump -i any -w temp.cap -s 65535 -p port 443 or port 8444 or port 8055 or port 5678
+/usr/sbin/tcpdump -i any -tttt -n -w temp.cap -s 65535 -p port 443 or port 8444 or port 8055 or port 5678
 ```
 write the output to `temp.cap`. Set the snapshot `-s`  length to 65535. Send output to stdout `-p`
 along with the .cap file. The last part is the filtering piece. This is the most complicated part
