@@ -272,7 +272,10 @@ git fetch --all    # fetches all remote branches.
 ```
 git log --follow <filename>
 ```
-
+#### Show line changes in each commit
+```
+git log -p <filename>
+```
 ### git merge
 
 To merge changes from branchB into branchA. It is very important to pull in the latest,
