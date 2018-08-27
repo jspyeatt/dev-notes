@@ -1,5 +1,10 @@
 # Linux Notes
 
+## Restarting the Network Manager
+```
+sudo service network-manager restart
+```
+
 ## What process is holding a port
 ```
 netstat -tulpn|grep 9000
