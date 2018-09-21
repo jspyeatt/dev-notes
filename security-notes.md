@@ -4,9 +4,21 @@
 `keytool` command works with keys, certificates and keystores.
 * [tutorial] (http://tutorials.jenkov.com/java-cryptography/keytool.html)
 
+Note, JKS is a proprietary format and PKCS12 is more the standard. So if possible use PKCS12.
+
+One difference between the 2 is for JKS you can have a separate password for each keypair
+in the keystore. For PKCS12 you only have the storepass.
+
+### Generate a Public/Private Key Pair (PKCS12)
+```
+keytool -genkeypair -alias firstkeypair -keyalg RSA -keysize 2048 -dname "CN=John Pyeatt, OU=Development, O=My Company, L=Madison, ST=Wisconsin, C=US" -validity 9999 -storetype PKCS12 -keystore mykeystore.pkcs12 -storepass abcdef
+```
+Add another keypair to the same file.
+```
+keytool -genkeypair -alias secondkeypair -keyalg RSA -keysize 2048 -dname "CN=John Pyeatt, OU=Development, O=My Company, L=Madison, ST=Wisconsin, C=US" -validity 9999 -storetype PKCS12 -keystore mykeystore.pkcs12 -storepass abcdef
+```
 ### Generate a Public/Private Key Pair (JKS)
-Note JKS is a proprietary format. The recommended format is PKCS12. At the end of this section I will show how
-to import from JKS to PKCS12.
+
 ```
 keytool -genkeypair -alias firstkeypair -keyalg RSA -keysize 2048 -dname "CN=John Pyeatt, OU=Development, O=My Company, L=Madison, ST=Wisconsin, C=US" -keypass 123456 -validity 9999 -storetype JKS -keystore mykeystore.jks -storepass abcdef
 ```
@@ -32,3 +44,11 @@ Then answer prompts. Here are the answers based on the example above.
 1. Enter key password for <firstkeypair>: 123456
 
 Note for pkcs12 the new keystore password and key password must match. That's why they are both 123456
+
+### Listing Keystore Entries
+```
+keytool -list -alias firstkeypair -storetype JKS --keystore mykeystore.jks --storepass abcdef
+```
+```
+keytool -list -alias firstkeypair -storetype PKCS12 --keystore mykeystore.pkcs12 --storepass 123456
+```
