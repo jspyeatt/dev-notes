@@ -4,7 +4,9 @@
 `keytool` command works with keys, certificates and keystores.
 * [tutorial] (http://tutorials.jenkov.com/java-cryptography/keytool.html)
 
-### Generate a Public/Private Key Pair
+### Generate a Public/Private Key Pair (JKS)
+Note JKS is a proprietary format. The recommended format is PKCS12. At the end of this section I will show how
+to import from JKS to PKCS12.
 ```
 keytool -genkeypair -alias firstkeypair -keyalg RSA -keysize 2048 -dname "CN=John Pyeatt, OU=Development, O=My Company, L=Madison, ST=Wisconsin, C=US" -keypass 123456 -validity 9999 -storetype JKS -keystore mykeystore.jks -storepass abcdef
 ```
@@ -19,3 +21,14 @@ dname is also used and the `issuer` and `subject` of a self-signed cert.
 * -storetype the file format of the keystore (JKS|PKCS11)
 * -keystore the name of the resulting keystore file on the file system.
 * -storepass the password for the entire keystore.
+
+#### Importing to PKCS12
+```
+keytool -importkeystore -srckeystore mykeystore.jks -destkeystore mykeystore.pkcs12 -deststoretype pkcs12
+```
+Then answer prompts. Here are the answers based on the example above.
+1. Enter destination keystore password: 123456
+1. Enter source keystore password: abcdef
+1. Enter key password for <firstkeypair>: 123456
+
+Note for pkcs12 the new keystore password and key password must match. That's why they are both 123456
