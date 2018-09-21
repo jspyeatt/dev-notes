@@ -65,3 +65,11 @@ Generating a certificate request for firstkeypair.
 ```
 keytool -certreq -alias firstkeypair -storetype PKCS12 -keystore mykeystore.pkcs12 -storepass abcdef -file destcertreq.certreq
 ```
+### Generate a Self-Signed Cert
+```
+keytool -genkey -keyalg RSA -alias myselfcert -keystore selfsigned.pkcs12 -validity 9999 -keysize 2048 -storetype PKCS12 -dname "CN=John Pyeatt, OU=Development, O=My Company, L=Madison, ST=Wisconsin, C=US" -storepass ZZZZZZ
+```
+Then run the list command to verify.
+```
+keytool -list -v -keystore selfsigned.pkcs12 -storetype PKCS12 -storepass ZZZZZZ
+```
