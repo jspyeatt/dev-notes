@@ -47,11 +47,16 @@ Note for pkcs12 the new keystore password and key password must match. That's wh
 
 ### Listing Keystore Entries
 ```
-keytool -list -storetype JKS --keystore mykeystore.jks --storepass abcdef
+keytool -list -storetype JKS -keystore mykeystore.jks --storepass abcdef
 ```
 ```
-keytool -list -storetype PKCS12 --keystore mykeystore.pkcs12 --storepass 123456
+keytool -list -storetype PKCS12 -keystore mykeystore.pkcs12 --storepass 123456
 ```
+Interrogate with RFC-1421 format
+```
+keytool -list -storetype PKCS12 -keystore mykeystore.pkcs12 --storepass 123456 --rfc
+```
+
 ### Exporting a Key Pair Cert
 ```
 keytool -exportcert -alias firstkeypair -file destination.crt -keystore mykeystore.pkcs12 -storepass abcdef -storetype PKCS12
