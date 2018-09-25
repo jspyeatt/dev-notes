@@ -9,6 +9,11 @@ pset format unaligned
 pset expanded off
 ```
 
+### Replace carriage returns with ' '.
+```
+select regexp_replace(expression, E'[\\n\\r]+', ' ', 'g') from icap_rules where provider='DallasCounty';
+```
+
 ### Time
 #### Timestamps
 Using a timestamp offset from the current time.
