@@ -1,5 +1,7 @@
 # clojure-notes
 My notes on how to use clojure
+## Useful Links
+[Good overview of everything](https://www.braveclojure.com/do-things/)
 
 ## Maps
 
