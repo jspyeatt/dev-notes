@@ -276,6 +276,10 @@ git log --follow <filename>
 ```
 git log -p <filename>
 ```
+#### Show graphical representation of git log.
+```
+git log --all --decorate --oneline --graph
+```
 ### git merge
 
 To merge changes from branchB into branchA. It is very important to pull in the latest,
