@@ -150,6 +150,7 @@ git stash list           # list any current stashes you have.
 git stash                # moves files to storage directory
 git stash show           # shows the list of files in the most recent stash
 git stash list           # should now see your stashed manifest. {0} == most recent stash
+git stash show stash@\{1\} -p  # shows all of the file changes in the stash
 
 # now you can do your pulls, merges or checkouts
 # after you are done you can bring your stashed files back into your working directory
