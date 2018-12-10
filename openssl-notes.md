@@ -21,7 +21,7 @@ openssl genrsa -aes128 -passout file:passphrase.txt -out server.key 2048
 ### Generate a CSR (Certificate Signing Request)
 ```bash
 openssl req -new -passin file:passphrase.txt -key server.key -out server.csr \
-    -subj "/C=FR/O=krkr/OU=Domain Control Validated/CN=*.krkr.io"
+    -subj "/C=OU/S=WI/L=Madison/O=Singlewire Software/OU=Dev Team/CN=jspyeatt.qadev.singlewire.com"
 ```
 
 ### Remove Passphrase from Key
