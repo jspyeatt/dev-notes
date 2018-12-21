@@ -146,10 +146,11 @@ you can bring your stashed files back into your working directory.
 
 Assume files a.txt and b.txt have been modified in your current working directory.
 ```
-git stash list           # list any current stashes you have.
-git stash                # moves files to storage directory
-git stash show           # shows the list of files in the most recent stash
-git stash list           # should now see your stashed manifest. {0} == most recent stash
+git stash list                 # list any current stashes you have.
+git stash                      # moves files to storage directory
+git stash save "My comment"    # add a custom comment to your stash
+git stash show                 # shows the list of files in the most recent stash
+git stash list                 # should now see your stashed manifest. {0} == most recent stash
 git stash show stash@\{1\} -p  # shows all of the file changes in the stash
 
 # now you can do your pulls, merges or checkouts
