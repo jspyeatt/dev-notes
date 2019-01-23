@@ -78,3 +78,25 @@ Then run the list command to verify.
 ```
 keytool -list -v -keystore selfsigned.pkcs12 -storetype PKCS12 -storepass ZZZZZZ
 ```
+## OpenSSL
+
+1. Generate a Key Pair into MyKeyPair.key
+```bash
+openssl genrsa -aes128 -out MyKeyPair.key
+```
+2. Generate a Certificate for the Key into MyCert.crt
+```bash
+openssl req -new -x509 -newkey rsa:2048 -sha256 -key MyKeyPair.key -out MyCert.crt
+```
+
+### Loading Keys and Certs via PKCS12
+If you have a key and cert in separate files and need to combine them into a PKCS12 format to load into a new keystore.
+
+```bash
+openssl pkcs12 -inkey SOURCE.key -in SOURCE.crt -export -out my.pkcs12
+```
+If you have a chain of certs because your Certificate Authority is an intermediary you can create a pkcs12 file like this:
+```bash
+cat example.crt intermediate-1.crt intermediate-2.crt rootCA.crt > cert-chain.txt
+openssl pkcs12 -export -inkey SOURCE.key -in cert-chain.txt -out my.pkcs12
+```
