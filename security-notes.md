@@ -100,3 +100,9 @@ If you have a chain of certs because your Certificate Authority is an intermedia
 cat example.crt intermediate-1.crt intermediate-2.crt rootCA.crt > cert-chain.txt
 openssl pkcs12 -export -inkey SOURCE.key -in cert-chain.txt -out my.pkcs12
 ```
+### Creating Sample Keystore
+```bash
+openssl req -newkey rsa:2048 -nodes -keyout key.pem -x509 -days 3650 -out certificate.pem
+openssl x509 -text -noout -in certificate.pem
+openssl pkcs12 -inkey key.pem -in certificate.pem -export -out idp-browser.p12
+```
