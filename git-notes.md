@@ -70,6 +70,11 @@ git pull origin master            # make certain that branch is up to date with 
 git checkout -b new_branch_name   # create the new branch
 git push origin new_branch_name   # push new branch to remote
 ```
+
+### Find Parent Branch
+```bash
+git show-branch -a | grep '\*' | grep -v `git rev-parse --abbrev-ref HEAD` | head -n1 | sed 's/.*\[\(.*\)\].*/\1/' | sed 's/[\^~].*//'
+```
 ### Delete a Local Branch
 ```
 git branch -d <local-branch-name>
