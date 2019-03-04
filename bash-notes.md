@@ -25,3 +25,13 @@ done
 # if the variable 'inp' has a value, use it. Otherwise set to the string localhost
 host=${inp:-localhost}
 ```
+
+## Loop Counter
+```bash
+num=1
+for f in "first second third fourth"
+do
+   echo "$num $f"
+   let num=num+1
+done
+```
