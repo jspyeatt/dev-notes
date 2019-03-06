@@ -224,6 +224,29 @@ The result from the above call would be
 ```clojure
 ({:name "JohnPyeatt", :sport "golf"} {:name "BetseyDavis", :sport "golf"})
 ```
+#### Get Subset of List of Maps Based on a Sequence of values
+```clojure
+(let [complete-county-list [{:same-code "048127"
+                             :st-abbrev "TX"
+                             :cty-name "Dimmit"}
+                            {:same-code "048327"
+                             :st-abbrev "TX"
+                             :cty-name "Menard"}
+                            {:same-code: "048005"
+                             :st-abbrev: "TX"
+                             :cty-name "Angelo" 
+                            }
+                            {:same-code "048007"
+                             :cty-name "Aransas"
+                             :st-abbrev "TX"}
+       valid-same-codes ["048007" "048127"]
+       sub-county-list (filter 
+                          (fn [x] 
+                             (some 
+                                (fn [y] (= (:same-code x) y))
+                                   valid-same-codes) complete-county-list)])
+  ;; sub-county-list should now contain the maps for Dimmit and Aransas counties.      
+```
 
 ### Queues
 LIFO implementation.
