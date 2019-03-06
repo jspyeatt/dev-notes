@@ -245,7 +245,9 @@ The result from the above call would be
                              (some 
                                 (fn [y] (= (:same-code x) y))
                                    valid-same-codes) complete-county-list)])
-  ;; sub-county-list should now contain the maps for Dimmit and Aransas counties.      
+  ;; sub-county-list should now contain
+  [{:same-code "048127" :st-abbrev "TX" :cty-name "Dimmit"}
+   {:same-code "048007" :cty-name "Aransas" :st-abbrev "TX"}]
 ```
 
 ### Queues
