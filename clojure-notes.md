@@ -146,6 +146,13 @@ Results in this
 ```clojure
 ({:name "john", :age 55} {:name "Betsey", :age 53} {:name "Sam", :age 20} {:name "Gwen", :age 18})
 ```
+#### intersection of two lists
+```clojure
+(let [a [1 3 5 7 9]
+      c [3 7 8]]
+  (filter (set a) c))
+=> (3 7)
+```
 
 ### Vectors
 Vectors are like arrays. You use them when you want to add to the end of a vector, again using `conj`. Or when you need
