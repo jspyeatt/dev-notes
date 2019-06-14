@@ -116,6 +116,15 @@ git push origin feature/inbound-cap
 git log        # get the commit_sha number you want to go back to.
 git reset --hard commit_sha
 ```
+### Test for Merge Conflicts without Committing in the First Place
+Checking for conflicts when merging from devBranch into rootBranch.
+```
+git checkout rootBranch
+git merge devBranch --no-ff --no-commit;git merge --abort
+```
+`-no-ff` Generate a merge commit even if the merge resolved as a fast-forward.
+
+`–no-commi`t With –no-commit perform the merge but pretend the merge failed and do not autocommit, to give the user a chance to inspect and further tweak the merge result before committing.
 
 ### Rebasing a branch
 Rebasing is similar to merging in the sense the end result of the process has hopefully
