@@ -120,8 +120,13 @@ git reset --hard commit_sha
 Checking for conflicts when merging from devBranch into rootBranch.
 ```
 git checkout rootBranch
-git merge devBranch --no-ff --no-commit;git merge --abort
+git merge devBranch --no-ff --no-commit
 ```
+Then when you've reviewed the conflicts to get back to your original state
+```
+git merge --abort
+```
+
 `-no-ff` Generate a merge commit even if the merge resolved as a fast-forward.
 
 `–no-commi`t With –no-commit perform the merge but pretend the merge failed and do not autocommit, to give the user a chance to inspect and further tweak the merge result before committing.
