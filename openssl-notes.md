@@ -1,4 +1,5 @@
 # openssl
+I've got more stuff [here](https://github.com/jspyeatt/dev-notes/blob/master/security-notes.md) too.
 
 ## Create a Self-signed Certificate
 ```bash
