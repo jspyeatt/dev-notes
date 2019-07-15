@@ -106,3 +106,11 @@ openssl req -newkey rsa:2048 -nodes -keyout key.pem -x509 -days 3650 -out certif
 openssl x509 -text -noout -in certificate.pem
 openssl pkcs12 -inkey key.pem -in certificate.pem -export -out idp-browser.p12
 ```
+### Converting Certs from Trusted Providers to .jks file
+This is usually done for our mobile api. For our example whenever you are prompted for a password use `asdf1234!!`
+
+1. create `/tmp/qadevJune2019unprotected.key` and put the contents in the file.
+1. create `/tmp/star_qadev_singlewire_com.crt` and put the contents in the file.
+1. `openssl pkcs12 -export -in /tmp/star_qadev_singlewire_com.crt -inkey /tmp/qadevJune2019unprotected.key -name "restapi" -out restapi.p12`    This will create a .p12 file format from your certificate and your key.
+1. `keytool -importkeystore -destkeystore keystore.jks -srckeystore restapi.p12 -srcstoretype PKCS12`  This will convert 
+1. `keytool -list -v -keystore keystore.jks` verify output by checking for new expiration date.
