@@ -91,7 +91,45 @@ If the file is staged (added, but not yet committed). Will move it back to worki
 ```
 git reset HEAD <filename>
 ```
+### Checking out a Specific Commit from a Branch then Setting it back
+You can checkout files from a specfic commit SHA and then when you are done reset to most recent.
 
+#### Checkout Specific Commit
+```
+git log
+commit a1d961df42457c993e79a36c89478d249721ebfb
+Author: John Pyeatt <john.pyeatt@singlewire.com>
+Date:   Tue Jul 16 17:42:25 2019 -0500
+
+    Back to no plugins configuration. Also changed Jenkinsfile to see if GIT_COMMIT is there.
+
+commit 2e48447289801c2b1fd383584059f3276c1fa571
+Author: John Pyeatt <john.pyeatt@singlewire.com>
+Date:   Tue Jul 16 10:52:46 2019 -0500
+
+    Changed an error message to a warning in icap service.
+
+commit 7e59b96b8484bca7004f99f76dc301a7e2e2f79a
+Merge: b10e858 ae20bd7
+Author: Charlie Ciccia <charlie.ciccia@singlewire.com>
+Date:   Tue Jul 16 15:19:58 2019 -0500
+
+    Merge branch 'feature/SW-8089' into 'release/2019-foxtrot'
+    
+    First crack at adding syncId properties to Messages, Bells, Ring Lists,...
+    
+    See merge request fusion/InformaCast!123
+
+```
+```
+git checkout 7e59b96b8484b
+```
+Now you should be on at the point where the First Crack commit was performed.
+#### Reset to most recent
+After you've checked out the specific commit you can bring everything back to most current commits by entering.
+```
+git pull --rebase BRANCH_NAME # where BRANCH_NAME is your current branch.
+```
 ### Merge Branches
 ```
 git checkout branchB     # branchB has changes you want to pull into branchA
