@@ -53,5 +53,5 @@ tcpdump -r <filename> | less
 ```
 ar x FILENAME.deb
 ```
-Look for a file called `data.tar.gz`.
-Then you can run `tar -txzf data.tar.gz` to explode the contents.
+Look for a file called `data.tar.xz`.
+Then you can run `tar -xf data.tar.xz` to explode the contents.
