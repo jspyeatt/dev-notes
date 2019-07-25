@@ -128,7 +128,7 @@ Now you should be on at the point where the First Crack commit was performed.
 #### Reset to most recent
 After you've checked out the specific commit you can bring everything back to most current commits by entering.
 ```
-git pull --rebase BRANCH_NAME # where BRANCH_NAME is your current branch.
+git pull --rebase origin BRANCH_NAME # where BRANCH_NAME is your current branch.
 ```
 ### Merge Branches
 ```
