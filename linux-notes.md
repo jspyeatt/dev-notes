@@ -49,3 +49,9 @@ For a complete list of filters go here. (https://linux.die.net/man/7/pcap-filter
 ```
 tcpdump -r <filename> | less
 ```
+## Exploding a .deb file to Inspect its Contents
+```
+ar x FILENAME.deb
+```
+Look for a file called `data.tar.gz`.
+Then you can run `tar -txzf data.tar.gz` to explode the contents.
