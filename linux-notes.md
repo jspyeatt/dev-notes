@@ -55,3 +55,21 @@ ar x FILENAME.deb
 ```
 Look for a file called `data.tar.xz`.
 Then you can run `tar -xf data.tar.xz` to explode the contents.
+
+## iptables
+### list active rules
+```
+sudo iptables -S
+```
+### list a specific chain
+```
+sudo iptables -S TCP
+```
+### list rules as tables
+```
+sudo iptables -L
+```
+### change the INPUT rules to allow all input
+```
+sudo iptables -P INPUT ACCEPT
+```
