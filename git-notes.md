@@ -169,6 +169,21 @@ git merge --abort
 
 `–no-commi`t With –no-commit perform the merge but pretend the merge failed and do not autocommit, to give the user a chance to inspect and further tweak the merge result before committing.
 
+### Resolving Merge Conflicts of Binary Files
+Sometimes when you do a merge you will see the following:
+```
+warning: Cannot merge binary files: /src/foo.bin (HEAD vs. release/2019-foxtrot)
+warning: Cannot merge binary files: /src/bar.bin (HEAD vs. release/2019-foxtrot)
+```
+So how you resolve this is as follows:
+#### Keep the version in your current branch
+```
+git checkout --ours -- src/foo.bin
+```
+#### Keep the version in the branch you are trying to merge in
+```
+git checkout --theirs -- src/bar.bin
+```
 ### Rebasing a branch
 Rebasing is similar to merging in the sense the end result of the process has hopefully
 pulled in all of the changes from the two branches. But they do this in different ways.
