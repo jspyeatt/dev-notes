@@ -179,11 +179,15 @@ So how you resolve this is as follows:
 #### Keep the version in your current branch
 ```
 git checkout --ours -- src/foo.bin
+git add src/foo.bin
 ```
 #### Keep the version in the branch you are trying to merge in
 ```
 git checkout --theirs -- src/bar.bin
+git add src/bar.bin
 ```
+Then commit the merge as normal.
+
 ### Rebasing a branch
 Rebasing is similar to merging in the sense the end result of the process has hopefully
 pulled in all of the changes from the two branches. But they do this in different ways.
