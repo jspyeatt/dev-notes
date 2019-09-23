@@ -36,6 +36,10 @@ Other useful commmand line options.
 1. `-n` display hosts by IP Address, not DNS
 1. -tttt display human-readable timestamps
 
+### Hex dump to screen
+```
+/usr/sbin/tcpdump -XX -v -n -i any port 8081
+```
 
 Some other useful predicates:
 1. `host www.cnn.com` include only traffic with cnn.com
