@@ -1,12 +1,12 @@
 #!/bin/bash
 
-if [ $# -eq 0 ]
+if [ $# -lt 2 ]
 then
-   echo "ERROR: You need to specify a hostname or ip address"
+   echo "ERROR: You need to specify a hostname or ip address and a destination directory for the certs"
    exit 1
 fi
 
-certDir=/tmp/certs
+certDir=$2
 mkdir -p $certDir
 rm ${certDir}/* 2>/dev/null
 
