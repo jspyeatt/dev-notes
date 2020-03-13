@@ -35,3 +35,9 @@ openssl rsa -in server.key.org -passin file:passphrase.txt -out server.key
 ```bash
 openssl x509 -req -days 36500 -in server.csr -signkey server.key -out server.crt
 ```
+### Verifying a Certificate
+If you've generated a root CA certificate and used it to sign a server (child) certificate you can 
+verify the trust chain.
+```bash
+openssl verify -CAfile root-ca.pem child-cert.pem
+```
