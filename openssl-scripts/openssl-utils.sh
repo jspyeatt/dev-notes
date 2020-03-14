@@ -2,8 +2,9 @@
 
 # This script generates a bunch of different certificates and keys which
 # which can be used for a variety of situations.
-# https://www.digicert.com/kb/ssl-support/openssl-quick-reference-guide.htm
 
+# https://www.digicert.com/kb/ssl-support/openssl-quick-reference-guide.htm - about creating and signing
+# https://deliciousbrains.com/ssl-certificate-authority-for-local-https-development/ - root CA description
 OPENSSL=/usr/bin/openssl
 parentSubject="/C=US/ST=Wisconsin/L=Madison/O=Singlewire Software/OU=Dev"
 
@@ -123,7 +124,22 @@ function modulusCheckKeys {
   $OPENSSL req -modulus -in $csrFile -noout |openssl sha256
   $OPENSSL x509 -modulus -in $certFile -noout |openssl sha256
 }
-# Creates the entire bloody thing.
+
+# Pass in a private key and a subject and it will generate your own CA cert
+function createRootCA {
+  echo "createRootCA"
+  privateKey=$1
+  subject=$2
+  rootCACert=$3
+
+  $OPENSSL req -x509 -new -nodes -key $privateKey -sha256 -days 36500 -out $rootCACert -subj "${subject}"
+  if [ $? -ne 0 ]
+	then
+		echo "ERROR: unable to create root CA"
+		exit 1
+	fi
+}
+# createEverythingMethod1
 # 1 - creates a private key
 # 2 - prints the private key
 # 3 - prints the public key from the private key
@@ -132,7 +148,8 @@ function modulusCheckKeys {
 # 6 - self-signs a certificate
 # 7 - view your certificate
 
-function createEverythingMethod1 {
+function createSelfSignedCertificateFromNothing {
+  echo "createSelfSignedCertificateFromNothing"
   certDir=$1
   subject=$2
   mkdir -p $certDir 2> /dev/null
@@ -155,7 +172,69 @@ function createEverythingMethod1 {
   echo "CSR file    " $csrFile
   echo "Cert file   " $certFile
 }
+
+function createConfigFileWithSAN {
+  echo "createConfigFileWithSAN"
+  destFile=$1
+  dns1=$2
+  dns2=$3
+  echo "authorityKeyIdentifier=keyid,issuer" > $destFile
+  echo "basicConstraints=CA:FALSE" >> $destFile
+  echo "keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment" >> $destFile
+  echo "subjectAltName = @alt_names" >> $destFile
+  echo "" >> $destFile
+  echo "[alt_names]" >> $destFile
+  echo "DNS.1 = ${dns1}" >> $destFile
+  echo "DNS.2 = ${dns2}" >> $destFile
+}
+function createSignedCertFromCA {
+  echo "createSignedCertFromCA"
+  caPrivateKey=$1
+  caCert=$2
+  csrFile=$3
+  confFile=$4
+  siteCert=$5
+  $OPENSSL x509 -req -in $csrFile -CA $caCert -CAkey $caPrivateKey -CAcreateserial -out $siteCert -days 36500 -sha256 -extfile $confFile
+
+  if [ $? -ne 0 ]
+	then
+		echo "ERROR: unable to create signed cert from CA"
+		exit 1
+	fi
+}
+function createCASignedCertificateFromNothing {
+  echo "createCASignedCertificateFromNothing"
+  certDir=$1
+  caSubject=$2
+  siteSubject=$3
+  host=$4
+  ipList=$5
+  mkdir -p $certDir 2>/dev/null
+
+  caPrivateKey=${certDir}/ca-private.key
+  caCert=${certDir}/ca.crt
+  sitePrivateKey=${certDir}/site.key
+  siteCSR=${certDir}/site.csr
+  siteCert=${certDir}/site.crt
+  configFile=${certDir}/site.config
+
+  generatePrivateRSAKey $caPrivateKey
+  createRootCA $caPrivateKey "${caSubject}" $caCert
+  generatePrivateRSAKey $sitePrivateKey
+  createCSR $sitePrivateKey "${siteSubject}" $siteCSR
+  createConfigFileWithSAN $configFile $host "$ipList"
+  createSignedCertFromCA $caPrivateKey $caCert $siteCSR $configFile $siteCert
+
+  echo "CA private key       " $caPrivateKey
+  echo "CA cert              " $caCert
+  echo "Site private key     " $sitePrivateKey
+  echo "Site CSR             " $siteCSR
+  echo "Site cert            " $siteCert
+  echo "Config file with SAN " $configFile
+}
 host="jspyeatt.qadev.singlewire.com"
 subject="${parentSubject}/CN=${host}"
+caSubject="${parentSubject}/CN=Singlewire Software LLC"
 
-createEverythingMethod1 /tmp/certs "$subject"
+# createSelfSignedCertificateFromNothing /tmp/certs-self-signed "$subject"
+createCASignedCertificateFromNothing "/tmp/ca-certs" "${caSubject}" "${subject}" $host "172.20.127.120 172.20.146.120"
