@@ -267,6 +267,7 @@ function createCASignedCertificateFromNothing {
   echo "==========================================================="
   echo "CA root private key  " $caPrivateKey
   echo "CA root cert         " $caCert
+  echo "CA serial            " ${certDir}/ca-root.srl
   echo "Site private key     " $sitePrivateKey
   echo "Site CSR             " $siteCSR
   echo "Site cert            " $siteCert
