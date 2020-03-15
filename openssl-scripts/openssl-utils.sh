@@ -222,6 +222,7 @@ nsComment            = "OpenSSL Generated Certificate"
 
 [ alternate_names ]
 DNS.1       = $dns1
+DNS.2       = $dns2
 EOF
 }
 function createSignedCertFromCA {
@@ -300,8 +301,14 @@ function createSelfSignedCertificateFromNothingWithSAN {
 	echo "Config file with SAN " $configFile
 	echo "==========================================================="
 }
-host="jspyeatt.qadev.singlewire.com"
-ip="172.20.127.120"
+if [ $# -lt 2 ]
+then
+  echo "ERROR: You must specify a host name and ip address for the certs"
+  exit 1
+fi
+
+host=$1
+ip=$2
 subject="${parentSubject}/CN=${host}"
 caSubject="${parentSubject}/CN=Singlewire Software LLC"
 
