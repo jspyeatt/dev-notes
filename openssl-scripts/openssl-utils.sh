@@ -11,7 +11,7 @@ parentSubject="/C=US/ST=Wisconsin/L=Madison/O=Singlewire Software/OU=Dev"
 # Some functions need a random password. This generates one
 # and stores it in a file.
 function generateRandomPasswordFile {
-	echo "generateRandomPasswordFile"
+	#echo "generateRandomPasswordFile"
 	destPasswordFile=$1
 	$OPENSSL rand -base64 48 > $destPasswordFile
 }
@@ -21,7 +21,7 @@ function generateRandomPasswordFile {
 # This method of creating a key doesn't use a passphrase
 # The resulting key is in PEM format which is a base64 translation of x509 ASN.1 keys
 function generatePrivateRSAKey {
-	echo "generatePrivateRSAKey"
+	#echo "generatePrivateRSAKey"
 	privateKeyDest=$1
 	# generate a 2048 bit private RSA key
 	$OPENSSL genrsa -out $privateKeyDest 2048
@@ -34,7 +34,7 @@ function generatePrivateRSAKey {
 
 # prints the contents of a private key generated with generatePrivateRSAKey
 function printPrivateKey {
-	echo "printPrivateKey"
+	#echo "printPrivateKey"
 	privateKey=$1
 	# -noout omits the output of the encoded version of the private key
 	$OPENSSL rsa -text -in $privateKey -noout
@@ -49,7 +49,7 @@ function printPrivateKey {
 # extracts the public key from the private key generated with generatePrivateRSAKey
 # This generally isn't needed.
 function extractPublicKeyFromPrivateKey {
-	echo "extractPublicKeyFromPrivateKey"
+	#echo "extractPublicKeyFromPrivateKey"
 	privateKey=$1
 	publicKey=$2
 	$OPENSSL rsa -in $privateKey -pubout -out $publicKey
@@ -64,7 +64,7 @@ function extractPublicKeyFromPrivateKey {
 # create a CSR given the private key, the destination CSR file and the CSR subject.
 # the subject should include everything up to and including the CN=FQDN
 function createCSR {
-	echo "createCSR"
+	#echo "createCSR"
 	privateKey=$1
 	subj=$2
 	csrFile=$3
@@ -79,7 +79,7 @@ function createCSR {
 
 # Verifies the CSR you created is valid. Check the Subject: setting.
 function verifyCSR {
-	echo "verifyCSR"
+	#echo "verifyCSR"
 	csrFile=$1
 	$OPENSSL req -text -in $csrFile	 -noout -verify | grep "Subject:"
 		if [ $? -ne 0 ]
@@ -92,7 +92,7 @@ function verifyCSR {
 # If you are going to self-sign the certificate You pass in the private key, the
 # CSR and the result will be put in the certFile.
 function signCertificate {
-	echo "signCertificate"
+	#echo "signCertificate"
 	privateKey=$1
 	csrFile=$2
 	certFile=$3
@@ -105,7 +105,7 @@ function signCertificate {
 }
 
 function printCertificate {
-  echo "printCertificate"
+  #echo "printCertificate"
   certFile=$1
   $OPENSSL x509 -text -in $certFile -noout
   if [ $? -ne 0 ]
@@ -116,7 +116,7 @@ function printCertificate {
 }
 
 function modulusCheckKeys {
-  echo "modulusCheckKeys"
+  #echo "modulusCheckKeys"
   privateKey=$1
   csrFile=$2
   certFile=$3
@@ -127,7 +127,7 @@ function modulusCheckKeys {
 
 # Pass in a private key and a subject and it will generate your own CA cert
 function createRootCA {
-  echo "createRootCA"
+  #echo "createRootCA"
   privateKey=$1
   subject=$2
   rootCACert=$3
@@ -149,47 +149,83 @@ function createRootCA {
 # 7 - view your certificate
 
 function createSelfSignedCertificateFromNothing {
-  echo "createSelfSignedCertificateFromNothing"
+  #echo "createSelfSignedCertificateFromNothing"
   certDir=$1
-  subject=$2
+  host=$3
+  subject="$2/CN=$host"
+
   mkdir -p $certDir 2> /dev/null
   rm ${certDir}/* 2> /dev/null
 
-  privateKey=${certDir}/my-private.key
-  publicKey=${certDir}/my-public.key
-  csrFile=${certDir}/my.csr
-  certFile=${certDir}/my.crt
+  privateKey=${certDir}/site.key
+  # publicKey=${certDir}/my-public.key
+  csrFile=${certDir}/site.csr
+  certFile=${certDir}/site.crt
+
   generatePrivateRSAKey $privateKey
   # printPrivateKey $privateKey
-  extractPublicKeyFromPrivateKey $privateKey $publicKey
+  # extractPublicKeyFromPrivateKey $privateKey $publicKey
   createCSR $privateKey "${subject}" $csrFile
   verifyCSR $csrFile
   signCertificate $privateKey $csrFile $certFile
   # printCertificate $certFile
   modulusCheckKeys $privateKey $csrFile $certFile
 
-  echo "private key " $privateKey
-  echo "public key  " $publicKey
-  echo "CSR file    " $csrFile
-  echo "Cert file   " $certFile
+  echo "==========================================================="
+  echo "Site private key " $privateKey
+  #echo "public key  " $publicKey
+  echo "Site CSR         " $csrFile
+  echo "Site cert        " $certFile
+  echo "==========================================================="
 }
 
 function createConfigFileWithSAN {
-  echo "createConfigFileWithSAN"
+  #echo "createConfigFileWithSAN"
   destFile=$1
   dns1=$2
   dns2=$3
-  echo "authorityKeyIdentifier=keyid,issuer" > $destFile
-  echo "basicConstraints=CA:FALSE" >> $destFile
-  echo "keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment" >> $destFile
-  echo "subjectAltName = @alt_names" >> $destFile
-  echo "" >> $destFile
-  echo "[alt_names]" >> $destFile
-  echo "DNS.1 = ${dns1}" >> $destFile
-  echo "DNS.2 = ${dns2}" >> $destFile
+
+  cat > $destFile <<EOF
+[ req ]
+default_bits        = 2048
+distinguished_name  = subject
+req_extensions      = req_ext
+x509_extensions     = x509_ext
+string_mask         = utf8only
+
+[ subject ]
+countryName                 = US
+countryName_default         = US
+stateOrProvinceName         = WI
+stateOrProvinceName_default = WI
+localityName                = Madison
+localityName_default        = Madison
+organizationName            = Singlewire Software LLC
+organizationName_default    = Singlewire Software LLC
+commonName                  = $dns1
+commonName_default          = $dns1
+
+[ x509_ext ]
+subjectKeyIdentifier   = hash
+authorityKeyIdentifier = keyid,issuer
+basicConstraints       = CA:FALSE
+keyUsage               = digitalSignature, keyEncipherment
+subjectAltName         = @alternate_names
+nsComment              = "OpenSSL Generated Certificate"
+
+[ req_ext ]
+subjectKeyIdentifier = hash
+basicConstraints     = CA:FALSE
+keyUsage             = digitalSignature, keyEncipherment
+subjectAltName       = @alternate_names
+nsComment            = "OpenSSL Generated Certificate"
+
+[ alternate_names ]
+DNS.1       = $dns1
+EOF
 }
 function createSignedCertFromCA {
-  echo "createSignedCertFromCA"
+  #echo "createSignedCertFromCA"
   caPrivateKey=$1
   caCert=$2
   csrFile=$3
@@ -204,10 +240,11 @@ function createSignedCertFromCA {
 	fi
 }
 function createCASignedCertificateFromNothing {
-  echo "createCASignedCertificateFromNothing"
+  #echo "createCASignedCertificateFromNothing"
   certDir=$1
   caSubject=$2
-  siteSubject=$3
+  host=$4
+  siteSubject="$3/CN=$host"
   host=$4
   ipList=$5
   mkdir -p $certDir 2>/dev/null
@@ -227,16 +264,46 @@ function createCASignedCertificateFromNothing {
   createConfigFileWithSAN $configFile $host "$ipList"
   createSignedCertFromCA $caPrivateKey $caCert $siteCSR $configFile $siteCert
 
+  echo "==========================================================="
   echo "CA root private key  " $caPrivateKey
   echo "CA root cert         " $caCert
   echo "Site private key     " $sitePrivateKey
   echo "Site CSR             " $siteCSR
   echo "Site cert            " $siteCert
   echo "Config file with SAN " $configFile
+  echo "==========================================================="
+}
+
+function createSelfSignedCertificateFromNothingWithSAN {
+  certDir=$1
+  host=$3
+  subject="$2/CN=$host"
+  ipList=$4
+  mkdir -p $certDir 2>/dev/null
+  rm ${certDir}/* 2> /dev/null
+
+  configFile=${certDir}/site.config
+  sitePrivateKey=${certDir}/site.key
+  siteCert=${certDir}/site.crt
+
+  createConfigFileWithSAN $configFile $host "$ipList"
+  $OPENSSL req -config $configFile -new -sha256 -newkey rsa:2048 -nodes -keyout $sitePrivateKey -x509 -days 36500 -out $siteCert -subj "${subject}"
+  if [ $? -ne 0 ]
+	then
+		echo "ERROR: unable to create signed cert with SAN"
+		exit 1
+	fi
+  echo "==========================================================="
+	echo "Site private key     " $sitePrivateKey
+	echo "Site cert            " $siteCert
+	echo "Config file with SAN " $configFile
+	echo "==========================================================="
 }
 host="jspyeatt.qadev.singlewire.com"
+ip="172.20.127.120"
 subject="${parentSubject}/CN=${host}"
 caSubject="${parentSubject}/CN=Singlewire Software LLC"
 
-# createSelfSignedCertificateFromNothing /tmp/certs-self-signed "$subject"
-createCASignedCertificateFromNothing "/tmp/ca-certs" "${caSubject}" "${subject}" $host "172.20.127.120 172.20.146.120"
+createSelfSignedCertificateFromNothing /tmp/certs-self-signed "$parentSubject" $host
+createCASignedCertificateFromNothing "/tmp/ca-certs" "${caSubject}" "${parentSubject}" $host $ip
+createSelfSignedCertificateFromNothingWithSAN "/tmp/san-certs" "${parentSubject}" $host $ip
