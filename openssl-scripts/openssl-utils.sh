@@ -153,6 +153,7 @@ function createSelfSignedCertificateFromNothing {
   certDir=$1
   subject=$2
   mkdir -p $certDir 2> /dev/null
+  rm ${certDir}/* 2> /dev/null
 
   privateKey=${certDir}/my-private.key
   publicKey=${certDir}/my-public.key
@@ -210,9 +211,10 @@ function createCASignedCertificateFromNothing {
   host=$4
   ipList=$5
   mkdir -p $certDir 2>/dev/null
+  rm ${certDir}/* 2> /dev/null
 
-  caPrivateKey=${certDir}/ca-private.key
-  caCert=${certDir}/ca.crt
+  caPrivateKey=${certDir}/ca-root-private.key
+  caCert=${certDir}/ca-root.crt
   sitePrivateKey=${certDir}/site.key
   siteCSR=${certDir}/site.csr
   siteCert=${certDir}/site.crt
@@ -225,8 +227,8 @@ function createCASignedCertificateFromNothing {
   createConfigFileWithSAN $configFile $host "$ipList"
   createSignedCertFromCA $caPrivateKey $caCert $siteCSR $configFile $siteCert
 
-  echo "CA private key       " $caPrivateKey
-  echo "CA cert              " $caCert
+  echo "CA root private key  " $caPrivateKey
+  echo "CA root cert         " $caCert
   echo "Site private key     " $sitePrivateKey
   echo "Site CSR             " $siteCSR
   echo "Site cert            " $siteCert
