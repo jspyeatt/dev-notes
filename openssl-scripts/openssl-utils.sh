@@ -5,6 +5,8 @@
 
 # https://www.digicert.com/kb/ssl-support/openssl-quick-reference-guide.htm - about creating and signing
 # https://deliciousbrains.com/ssl-certificate-authority-for-local-https-development/ - root CA description
+# https://www.feistyduck.com/library/openssl-cookbook/online/ch-openssl.html - really good overview of openssl
+
 OPENSSL=/usr/bin/openssl
 parentSubject="/C=US/ST=Wisconsin/L=Madison/O=Singlewire Software/OU=Dev"
 
