@@ -1,4 +1,7 @@
-[[_TOC_]]
+- [Adding Certificates to Apache](#adding-certificates-to-apache)
+  * [Create and Insert a Self-Signed Certificate](#create-and-insert-a-self-signed-certificate)
+  * [Adding a Cert Signed with your own CA](#adding-a-cert-signed-with-your-own-cA)
+
 # Apache Notes
 
 ## Adding Certificates to Apache
