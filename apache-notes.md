@@ -65,13 +65,27 @@ openssl genrsa -out my-cert-private.key 2048
 ```bash
 openssl req -new -key my-cert-private.key -out my-cert.csr -days 3650 -subj "/C=US/ST=Wisconsin/L=Madison/O=Singlewire/OU=Self Signed Cert With Root CA/CN=jspyeatt.qadev.singlewire.com"
 ```
-**Sign your Certificate with your Root CA"
+**Sign your Certificate with your Root CA**
 ```bash
 openssl x509 -req -in my-cert.csr -CA my-root-ca.crt -CAkey my-root-ca.key -days 36500 -CAcreateserial -out my-cert.crt
 ```
 **Print Resulting Certificate**
 ```bash
 openssl x509 -text -in my-cert.crt
+```
+### Configuring Apache for Root CA
+```
+<VirtualHost *:22443>
+   DocumentRoot /var/www/html
+   ErrorLog ${APACHE_LOG_DIR}/error_22443.log
+   CustomLog ${APACHE_LOG_DIR}/access_22443.log combined
+
+   SSLEngine on
+   SSLCertificateFile /etc/apache2/certs/my-cert.crt
+   SSLCertificateKeyFile /etc/apache2/certs/my-cert-private.key
+   
+   SSLCertificateChainFile /etc/ssl/certs/ca-certificates.crt
+</VirtualHost>
 ```
 
 ## Building Apache
