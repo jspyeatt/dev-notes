@@ -186,6 +186,7 @@ function createConfigFileWithSAN {
   destFile=$1
   dns1=$2
   dns2=$3
+  orgName=$4
 
   cat > $destFile <<EOF
 [ req ]
@@ -202,8 +203,8 @@ stateOrProvinceName         = WI
 stateOrProvinceName_default = WI
 localityName                = Madison
 localityName_default        = Madison
-organizationName            = Singlewire Software LLC
-organizationName_default    = Singlewire Software LLC
+organizationName            = $orgName
+organizationName_default    = $orgName
 commonName                  = $dns1
 commonName_default          = $dns1
 
@@ -219,13 +220,20 @@ nsComment              = "OpenSSL Generated Certificate"
 subjectKeyIdentifier = hash
 basicConstraints     = CA:FALSE
 keyUsage             = digitalSignature, keyEncipherment
-subjectAltName       = @alternate_names
 nsComment            = "OpenSSL Generated Certificate"
 
-[ alternate_names ]
-DNS.1       = $dns1
-DNS.2       = $dns2
 EOF
+if [ "${dns1}" != "" ]
+then
+   echo 'subjectAltName = @alternate_names' >> $destFile
+   echo '[ alternate_names ]' >> $destFile
+   echo "DNS.1 = $dns1" >> $destFile
+fi
+if [ "${dns2}" != "" ]
+then
+   echo "DNS.2 = $dns2" >> $destFile
+fi
+
 }
 function createSignedCertFromCA {
   #echo "createSignedCertFromCA"
@@ -234,6 +242,11 @@ function createSignedCertFromCA {
   csrFile=$3
   confFile=$4
   siteCert=$5
+echo "caPrivateKey=$caPrivateKey $1"
+echo "caCert=$caCert $2"
+echo "csrFile=$csrFile $3"
+echo "confFile=$confFile $4"
+echo "siteCert=$siteCert $5"
   $OPENSSL x509 -req -in $csrFile -CA $caCert -CAkey $caPrivateKey -CAcreateserial -out $siteCert -days 36500 -sha256 -extfile $confFile
 
   if [ $? -ne 0 ]
@@ -264,7 +277,7 @@ function createCASignedCertificateFromNothing {
   createRootCA $caPrivateKey "${caSubject}" $caCert
   generatePrivateRSAKey $sitePrivateKey
   createCSR $sitePrivateKey "${siteSubject}" $siteCSR
-  createConfigFileWithSAN $configFile $host "$ipList"
+  createConfigFileWithSAN $configFile $host "$ipList" "Singlewire Software LLC"
   createSignedCertFromCA $caPrivateKey $caCert $siteCSR $configFile $siteCert
 
   echo "==========================================================="
@@ -278,6 +291,58 @@ function createCASignedCertificateFromNothing {
   echo "==========================================================="
 }
 
+function createCAandICASignedCertificateFromNothing {
+  certDir=$1
+  caSubject=$2
+  host=$3
+  siteSubject="$2/CN=$host"
+  host=$3
+  ipList=$4
+  mkdir -p $certDir 2>/dev/null
+  rm ${certDir}/* 2> /dev/null
+
+  caPrivateKey=${certDir}/ca-root-private.key
+  caCert=${certDir}/ca-root.crt
+
+  # generate root CA
+  generatePrivateRSAKey $caPrivateKey
+  createRootCA $caPrivateKey "/C=US/ST=Wisconsin/L=Madison/O=Singlewire Software Fake Root CA/OU=Dev" $caCert
+
+  icaPrivateKey=${certDir}/ica-private.key
+  icaCert=${certDir}/ica.crt
+  icaCsr=${certDir}/ica.csr
+  icaConfig=${certDir}/ica.config
+  # generate ICA from root CA
+  generatePrivateRSAKey $icaPrivateKey
+  createCSR $icaPrivateKey "/C=US/ST=Wisconsin/L=Madison/O=Singlewire Software Fake Intermediate CA/OU=Dev" $icaCsr
+  createConfigFileWithSAN $icaConfig "" "" "Singlewire Software Fake Intermediate CA"
+  createSignedCertFromCA $caPrivateKey $caCert $icaCsr $icaConfig $icaCert
+
+  sitePrivateKey=${certDir}/site.key
+  siteCert=${certDir}/site.crt
+  siteCsr=${certDir}/site.csr
+  siteConfig=${certDir}/site.config
+  # generate site cert from ICA
+  generatePrivateRSAKey $sitePrivateKey
+
+  createCSR $sitePrivateKey "${siteSubject}" $siteCsr
+  createConfigFileWithSAN $siteConfig $host $ipList "Singlewire Software Actual Site"
+  createSignedCertFromCA $icaPrivateKey $icaCert $siteCsr $siteConfig $siteCert
+
+  echo "==========================================================="
+  echo "CA root private key  " $caPrivateKey
+  echo "CA root cert         " $caCert
+  echo "CA serial            " ${certDir}/ca-root.srl
+  echo "ICA private key      " $icaPrivateKey
+  echo "ICA CSR              " $icaCsr
+  echo "ICA cert             " $icaCert
+  echo "ICA Config file      " $icaConfig
+  echo "Site private key     " $sitePrivateKey
+  echo "Site CSR             " $siteCsr
+  echo "Site cert            " $siteCert
+  echo "Site Config file SAN " $siteConfig
+  echo "==========================================================="
+}
 function createSelfSignedCertificateFromNothingWithSAN {
   certDir=$1
   host=$3
@@ -317,3 +382,4 @@ caSubject="${parentSubject}/CN=Singlewire Software LLC"
 createSelfSignedCertificateFromNothing /tmp/certs-self-signed "$parentSubject" $host
 createCASignedCertificateFromNothing "/tmp/ca-certs" "${caSubject}" "${parentSubject}" $host $ip
 createSelfSignedCertificateFromNothingWithSAN "/tmp/san-certs" "${parentSubject}" $host $ip
+createCAandICASignedCertificateFromNothing "/tmp/ica-certs" "${parentSubject}" $host $ip
