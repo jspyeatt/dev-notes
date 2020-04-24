@@ -14,7 +14,7 @@ parentSubject="/C=US/ST=Wisconsin/L=Madison/O=Singlewire Software/OU=Dev"
 # and stores it in a file.
 function generateRandomPasswordFile {
 	#echo "generateRandomPasswordFile"
-	destPasswordFile=$1
+	local destPasswordFile=$1
 	$OPENSSL rand -base64 48 > $destPasswordFile
 }
 
@@ -24,7 +24,7 @@ function generateRandomPasswordFile {
 # The resulting key is in PEM format which is a base64 translation of x509 ASN.1 keys
 function generatePrivateRSAKey {
 	#echo "generatePrivateRSAKey"
-	privateKeyDest=$1
+	local privateKeyDest=$1
 	# generate a 2048 bit private RSA key
 	$OPENSSL genrsa -out $privateKeyDest 2048
 	if [ $? -ne 0 ]
@@ -36,8 +36,7 @@ function generatePrivateRSAKey {
 
 # prints the contents of a private key generated with generatePrivateRSAKey
 function printPrivateKey {
-	#echo "printPrivateKey"
-	privateKey=$1
+	local privateKey=$1
 	# -noout omits the output of the encoded version of the private key
 	$OPENSSL rsa -text -in $privateKey -noout
 	if [ $? -ne 0 ]
@@ -52,8 +51,8 @@ function printPrivateKey {
 # This generally isn't needed.
 function extractPublicKeyFromPrivateKey {
 	#echo "extractPublicKeyFromPrivateKey"
-	privateKey=$1
-	publicKey=$2
+	local privateKey=$1
+	local publicKey=$2
 	$OPENSSL rsa -in $privateKey -pubout -out $publicKey
 	if [ $? -ne 0 ]
 	then
@@ -67,9 +66,9 @@ function extractPublicKeyFromPrivateKey {
 # the subject should include everything up to and including the CN=FQDN
 function createCSR {
 	#echo "createCSR"
-	privateKey=$1
-	subj=$2
-	csrFile=$3
+	local privateKey=$1
+	local subj=$2
+	local csrFile=$3
 
 	$OPENSSL req -new -key $privateKey -out $csrFile -subj "${subj}"
 	if [ $? -ne 0 ]
@@ -82,7 +81,7 @@ function createCSR {
 # Verifies the CSR you created is valid. Check the Subject: setting.
 function verifyCSR {
 	#echo "verifyCSR"
-	csrFile=$1
+	local csrFile=$1
 	$OPENSSL req -text -in $csrFile	 -noout -verify | grep "Subject:"
 		if [ $? -ne 0 ]
 	then
@@ -95,9 +94,9 @@ function verifyCSR {
 # CSR and the result will be put in the certFile.
 function signCertificate {
 	#echo "signCertificate"
-	privateKey=$1
-	csrFile=$2
-	certFile=$3
+	local privateKey=$1
+	local csrFile=$2
+	local certFile=$3
 	$OPENSSL x509 -req -days 36500 -in $csrFile -signkey $privateKey -out $certFile
 	if [ $? -ne 0 ]
 	then
@@ -108,7 +107,7 @@ function signCertificate {
 
 function printCertificate {
   #echo "printCertificate"
-  certFile=$1
+  local certFile=$1
   $OPENSSL x509 -text -in $certFile -noout
   if [ $? -ne 0 ]
 	then
@@ -119,9 +118,9 @@ function printCertificate {
 
 function modulusCheckKeys {
   #echo "modulusCheckKeys"
-  privateKey=$1
-  csrFile=$2
-  certFile=$3
+  local privateKey=$1
+  local csrFile=$2
+  local certFile=$3
   $OPENSSL rsa -modulus -in $privateKey -noout |openssl sha256
   $OPENSSL req -modulus -in $csrFile -noout |openssl sha256
   $OPENSSL x509 -modulus -in $certFile -noout |openssl sha256
@@ -130,9 +129,9 @@ function modulusCheckKeys {
 # Pass in a private key and a subject and it will generate your own CA cert
 function createRootCA {
   #echo "createRootCA"
-  privateKey=$1
-  subject=$2
-  rootCACert=$3
+  local privateKey=$1
+  local subject=$2
+  local rootCACert=$3
 
   $OPENSSL req -x509 -new -nodes -key $privateKey -sha256 -days 36500 -out $rootCACert -subj "${subject}"
   if [ $? -ne 0 ]
@@ -152,17 +151,17 @@ function createRootCA {
 
 function createSelfSignedCertificateFromNothing {
   #echo "createSelfSignedCertificateFromNothing"
-  certDir=$1
-  host=$3
-  subject="$2/CN=$host"
+  local certDir=$1
+  local host=$3
+  local subject="$2/CN=$host"
 
   mkdir -p $certDir 2> /dev/null
   rm ${certDir}/* 2> /dev/null
 
-  privateKey=${certDir}/site.key
+  local privateKey=${certDir}/site.key
   # publicKey=${certDir}/my-public.key
-  csrFile=${certDir}/site.csr
-  certFile=${certDir}/site.crt
+  local csrFile=${certDir}/site.csr
+  local certFile=${certDir}/site.crt
 
   generatePrivateRSAKey $privateKey
   # printPrivateKey $privateKey
@@ -183,10 +182,10 @@ function createSelfSignedCertificateFromNothing {
 
 function createConfigFileWithSAN {
   #echo "createConfigFileWithSAN"
-  destFile=$1
-  dns1=$2
-  dns2=$3
-  orgName=$4
+  local destFile=$1
+  local dns1=$2
+  local dns2=$3
+  local orgName=$4
 
   cat > $destFile <<EOF
 [ req ]
@@ -221,33 +220,27 @@ subjectKeyIdentifier = hash
 basicConstraints     = CA:FALSE
 keyUsage             = digitalSignature, keyEncipherment
 nsComment            = "OpenSSL Generated Certificate"
+subjectAltName = @alternate_names
 
+[ alternate_names ]
+DNS.1 = $dns1
+DNS.2 = $dns2
 EOF
-if [ "${dns1}" != "" ]
-then
-   echo 'subjectAltName = @alternate_names' >> $destFile
-   echo '[ alternate_names ]' >> $destFile
-   echo "DNS.1 = $dns1" >> $destFile
-fi
-if [ "${dns2}" != "" ]
-then
-   echo "DNS.2 = $dns2" >> $destFile
-fi
-
 }
 function createSignedCertFromCA {
   #echo "createSignedCertFromCA"
-  caPrivateKey=$1
-  caCert=$2
-  csrFile=$3
-  confFile=$4
-  siteCert=$5
-echo "caPrivateKey=$caPrivateKey $1"
-echo "caCert=$caCert $2"
-echo "csrFile=$csrFile $3"
-echo "confFile=$confFile $4"
-echo "siteCert=$siteCert $5"
-  $OPENSSL x509 -req -in $csrFile -CA $caCert -CAkey $caPrivateKey -CAcreateserial -out $siteCert -days 36500 -sha256 -extfile $confFile
+  local caPrivateKey=$1
+  local caCert=$2
+  local csrFile=$3
+  local siteCert=$4
+  local confFile=$5
+  confArg=''
+  if [ ! -z "$confFile" ]
+  then
+    confArg="-extfile $confFile"
+  fi
+
+  $OPENSSL x509 -req -in $csrFile -CA $caCert -CAkey $caPrivateKey -CAcreateserial -out $siteCert -days 36500 -sha256 $confArg
 
   if [ $? -ne 0 ]
 	then
@@ -257,28 +250,27 @@ echo "siteCert=$siteCert $5"
 }
 function createCASignedCertificateFromNothing {
   #echo "createCASignedCertificateFromNothing"
-  certDir=$1
-  caSubject=$2
-  host=$4
-  siteSubject="$3/CN=$host"
-  host=$4
-  ipList=$5
+  local certDir=$1
+  local caSubject=$2
+  local host=$4
+  local siteSubject="$3/CN=$host"
+  local ipList=$5
   mkdir -p $certDir 2>/dev/null
   rm ${certDir}/* 2> /dev/null
 
-  caPrivateKey=${certDir}/ca-root-private.key
-  caCert=${certDir}/ca-root.crt
-  sitePrivateKey=${certDir}/site.key
-  siteCSR=${certDir}/site.csr
-  siteCert=${certDir}/site.crt
-  configFile=${certDir}/site.config
+  local caPrivateKey=${certDir}/ca-root-private.key
+  local caCert=${certDir}/ca-root.crt
+  local sitePrivateKey=${certDir}/site.key
+  local siteCSR=${certDir}/site.csr
+  local siteCert=${certDir}/site.crt
+  local configFile=${certDir}/site.config
 
   generatePrivateRSAKey $caPrivateKey
   createRootCA $caPrivateKey "${caSubject}" $caCert
   generatePrivateRSAKey $sitePrivateKey
   createCSR $sitePrivateKey "${siteSubject}" $siteCSR
   createConfigFileWithSAN $configFile $host "$ipList" "Singlewire Software LLC"
-  createSignedCertFromCA $caPrivateKey $caCert $siteCSR $configFile $siteCert
+  createSignedCertFromCA $caPrivateKey $caCert $siteCSR $siteCert $configFile
 
   echo "==========================================================="
   echo "CA root private key  " $caPrivateKey
@@ -292,42 +284,42 @@ function createCASignedCertificateFromNothing {
 }
 
 function createCAandICASignedCertificateFromNothing {
-  certDir=$1
-  caSubject=$2
-  host=$3
-  siteSubject="$2/CN=$host"
-  host=$3
-  ipList=$4
+  local certDir=$1
+  local caSubject=$2
+  local host=$3
+  local siteSubject="$2/CN=$host"
+  local host=$3
+  local ipList=$4
   mkdir -p $certDir 2>/dev/null
   rm ${certDir}/* 2> /dev/null
 
-  caPrivateKey=${certDir}/ca-root-private.key
-  caCert=${certDir}/ca-root.crt
+  local caPrivateKey=${certDir}/ca-root-private.key
+  local caCert=${certDir}/ca-root.crt
 
   # generate root CA
   generatePrivateRSAKey $caPrivateKey
   createRootCA $caPrivateKey "/C=US/ST=Wisconsin/L=Madison/O=Singlewire Software Fake Root CA/OU=Dev" $caCert
 
-  icaPrivateKey=${certDir}/ica-private.key
-  icaCert=${certDir}/ica.crt
-  icaCsr=${certDir}/ica.csr
-  icaConfig=${certDir}/ica.config
+  local icaPrivateKey=${certDir}/ica-private.key
+  local icaCert=${certDir}/ica.crt
+  local icaCsr=${certDir}/ica.csr
+  local icaConfig=${certDir}/ica.config
   # generate ICA from root CA
   generatePrivateRSAKey $icaPrivateKey
   createCSR $icaPrivateKey "/C=US/ST=Wisconsin/L=Madison/O=Singlewire Software Fake Intermediate CA/OU=Dev" $icaCsr
   createConfigFileWithSAN $icaConfig "" "" "Singlewire Software Fake Intermediate CA"
-  createSignedCertFromCA $caPrivateKey $caCert $icaCsr $icaConfig $icaCert
+  createSignedCertFromCA $caPrivateKey $caCert $icaCsr $icaCert $icaConfig 
 
-  sitePrivateKey=${certDir}/site.key
-  siteCert=${certDir}/site.crt
-  siteCsr=${certDir}/site.csr
-  siteConfig=${certDir}/site.config
+  local sitePrivateKey=${certDir}/site.key
+  local siteCert=${certDir}/site.crt
+  local siteCsr=${certDir}/site.csr
+  local siteConfig=${certDir}/site.config
   # generate site cert from ICA
   generatePrivateRSAKey $sitePrivateKey
 
   createCSR $sitePrivateKey "${siteSubject}" $siteCsr
   createConfigFileWithSAN $siteConfig $host $ipList "Singlewire Software Actual Site"
-  createSignedCertFromCA $icaPrivateKey $icaCert $siteCsr $siteConfig $siteCert
+  createSignedCertFromCA $icaPrivateKey $icaCert $siteCsr $siteCert $siteConfig 
 
   echo "==========================================================="
   echo "CA root private key  " $caPrivateKey
@@ -344,16 +336,16 @@ function createCAandICASignedCertificateFromNothing {
   echo "==========================================================="
 }
 function createSelfSignedCertificateFromNothingWithSAN {
-  certDir=$1
-  host=$3
-  subject="$2/CN=$host"
-  ipList=$4
+  local certDir=$1
+  local host=$3
+  local subject="$2/CN=$host"
+  local ipList=$4
   mkdir -p $certDir 2>/dev/null
   rm ${certDir}/* 2> /dev/null
 
-  configFile=${certDir}/site.config
-  sitePrivateKey=${certDir}/site.key
-  siteCert=${certDir}/site.crt
+  local configFile=${certDir}/site.config
+  local sitePrivateKey=${certDir}/site.key
+  local siteCert=${certDir}/site.crt
 
   createConfigFileWithSAN $configFile $host "$ipList"
   $OPENSSL req -config $configFile -new -sha256 -newkey rsa:2048 -nodes -keyout $sitePrivateKey -x509 -days 36500 -out $siteCert -subj "${subject}"
