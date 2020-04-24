@@ -24,7 +24,7 @@ touch ${certRootDir}/index.txt
 touch ${certRootDir}/index.txt.attr
 echo 1000 > serial
 
-sed -e "s!BASE_CERT_DIR!${baseCertDir}!" $scriptDir/openssl-root.cnf.template > ${configDir}/openssl-root.cnf
+sed -e "s!BASE_CERT_DIR!${certRootDir}!" $scriptDir/openssl-root.cnf.template > ${configDir}/openssl-root.cnf
 cd $certRootDir
 
 
