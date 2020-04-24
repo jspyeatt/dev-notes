@@ -28,14 +28,16 @@ openssl genrsa -aes256 -out ${rootDir}/private/ca.key.pem -passout pass:changeMe
 if [ $? -ne 0 ];then echo "ERROR creating private key"; exit 1; fi
 
 # create the root certificate
-openssl req -config $configFile -key ${rootDir}/private/ca.key.pem -new -x509 -days 3650 -sha256 -extensions v3_ca -passin pass:changeMe -out ${rootDir}/certs/ca.cert.pem -subj "/C=US/ST=Wisconsin/L=Madison/O=Singlewire Software Root CA/OU=Dev"
+openssl req -config $configFile -key ${rootDir}/private/ca.key.pem -new -x509 -days 3650 -sha256 -extensions v3_ca -passin pass:changeMe -out ${rootDir}/certs/ca.cert.pem -subj "/C=US/ST=Wisconsin/L=Madison/O=Pyeatt Root CA/OU=Dev"
 if [ $? -ne 0 ];then echo "ERROR creating root certificate"; exit 1; fi
 
 # verify the root certificate
-openssl x509 -noout -in ${rootDir}/certs/ca.cert.pem
+openssl x509 -text -in ${rootDir}/certs/ca.cert.pem
 if [ $? -ne 0 ];then echo "ERROR verifying certificate"; exit 1; fi
 
-echo "*************************"
+echo ""
+echo "***********************************************************************"
 echo "Root Certificate verified"
 echo "public certificate      = ${rootDir}/certs/ca.cert.pem"
 echo "private key             = ${rootDir}/private/ca.key.pem"
+echo "***********************************************************************"
