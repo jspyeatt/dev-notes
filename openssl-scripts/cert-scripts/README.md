@@ -42,7 +42,6 @@ mkdir /tmp/certs
 cd /tmp/certs
 cp $HOME/my-certs/rootCA/certs/ca.pem .
 cp $HOME/my-certs/intermediate/certs/intermediate.cert.pem .
-cp $HOME/my-certs/intermediate/certs/jspyeatt.singlewire.com.cert.pem .
 openssl rehash /tmp/certs
 openssl s_client -CApath /tmp/certs -connect jspyeatt.singlewire.com:22443 -showcerts
 ```
