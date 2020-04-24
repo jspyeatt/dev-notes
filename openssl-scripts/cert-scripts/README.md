@@ -31,3 +31,26 @@ certificate with the same common name.
 You can use this to create as many certificates as you like. But, you can't create a certificate
 for the same host twice because data about the previously created certificates is stored in the 
 directory structure.
+
+**IMPORTANT**: This script creates a private key which is password protected. 
+
+Sometimes Apache won't start if the private key is password protected. You can fix this be either 
+removing the password from the private key or add the `SSLPassPhraseDialog` to your apache's configuration
+file where appropriate. Below are the steps to remove the password.
+
+To confirm this you can run the command
+```bash
+head -3 PRIVATE_KEY_FILE
+```
+If it has something like 
+```
+Proc-TYpe: 4,ENCRYPTED
+```
+It's an encrypted keyfile.
+
+You can convert an encrypted password keyfile to one that is not encrypted you can run the following:
+```bash
+mv PRIVATE_KEY_FILE old.key  # move the original key file to a temporary location
+openssl rsa -in old.key -out PRIVATE_KEY_FILE # convert from password protected to not password protected.
+```
+
