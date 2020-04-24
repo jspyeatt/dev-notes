@@ -2,14 +2,14 @@
 
 if [ $# -lt 1 ]
 then
-  echo "ERROR: You must specify the directory of the .cnf files. It should be in the root of the gitlab repo."
+  echo "ERROR: You must specify the directory of the .cnf files and the host server FQDN."
   exit 1
 fi
 
 configDir=$1
 
 # This will create all the artifacts of an intermediate CA and put them in the directory /tmp/certs/intermediateCA
-rootDir='/tmp/certs/intermediateCA'
+rootDir='/tmp/certs/intermediate'
 rm -rf $rootDir
 mkdir -p $rootDir
 cd $rootDir
