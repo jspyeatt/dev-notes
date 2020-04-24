@@ -47,3 +47,6 @@ echo "host                    = $host"
 echo "public certificate      = ${hostCertFile}"
 echo "private key             = ${keyFile}"
 echo "***********************************************************************"
+echo "certificates created from the intermediate certificate"
+cat ${certIntermediateDir}/index.txt
+
