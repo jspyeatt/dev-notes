@@ -32,6 +32,23 @@ You can use this to create as many certificates as you like. But, you can't crea
 for the same host twice because data about the previously created certificates is stored in the 
 directory structure.
 
+### Installed in a server. 
+Let's say you've installed the certificate and private key for the hostname into a server like
+apache. Once you've done that you can verify the certificate chain by doing the following commands.
+
+
+```bash
+mkdir /tmp/certs
+cd /tmp/certs
+cp $HOME/my-certs/rootCA/certs/ca.pem .
+cp $HOME/my-certs/intermediate/certs/intermediate.cert.pem .
+cp $HOME/my-certs/intermediate/certs/jspyeatt.singlewire.com.cert.pem .
+openssl rehash /tmp/certs
+openssl s_client -CApath /tmp/certs -connect jspyeatt.singlewire.com:22443 -showcerts
+```
+This should return 0 and should also have the line `Verify return code: 0 (ok)`.
+
+### The password encrypted private key.
 **IMPORTANT**: This script creates a private key which is password protected. 
 
 Sometimes Apache won't start if the private key is password protected. You can fix this be either 
