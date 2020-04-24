@@ -6,11 +6,11 @@
 
 if [ $# -lt 1 ]
 then
-  echo "ERROR: You must specify the location of your openssl-root.cnf file. It should be in the root of the gitlab repo."
+  echo "ERROR: You must specify the directory of your openssl-root.cnf file. It should be in the root of the gitlab repo."
   exit 1
 fi
 
-configFile=$1
+configDir=$1
 
 # This will create all the artifacts of a root CA and put them in the directory /tmp/certs/rootCA
 rootDir='/tmp/certs/rootCA'
@@ -18,7 +18,8 @@ rm -rf $rootDir
 mkdir -p $rootDir
 cd $rootDir
 mkdir certs crl newcerts private
-touch index.txt
+touch ${rootDir}/index.txt
+touch ${rootDir}/index.txt.attr
 echo 1000 > serial
 
 cd $rootDir
@@ -28,7 +29,7 @@ openssl genrsa -aes256 -out ${rootDir}/private/ca.key.pem -passout pass:changeMe
 if [ $? -ne 0 ];then echo "ERROR creating private key"; exit 1; fi
 
 # create the root certificate
-openssl req -config $configFile -key ${rootDir}/private/ca.key.pem -new -x509 -days 3650 -sha256 -extensions v3_ca -passin pass:changeMe -out ${rootDir}/certs/ca.cert.pem -subj "/C=US/ST=Wisconsin/L=Madison/O=Pyeatt Root CA/OU=Dev"
+openssl req -config ${configDir}/openssl-root.cnf -key ${rootDir}/private/ca.key.pem -new -x509 -days 3650 -sha256 -extensions v3_ca -passin pass:changeMe -out ${rootDir}/certs/ca.cert.pem -subj "/C=US/ST=Wisconsin/L=Madison/O=Pyeatt/OU=Dev/CN=Root CA"
 if [ $? -ne 0 ];then echo "ERROR creating root certificate"; exit 1; fi
 
 # verify the root certificate
