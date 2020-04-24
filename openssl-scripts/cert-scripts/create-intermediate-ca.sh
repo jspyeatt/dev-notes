@@ -7,8 +7,8 @@ configDir=${baseCertDir}/conf
 
 certRootDir=${baseCertDir}/rootCA
 certIntermediateDir=${baseCertDir}/intermediate
-keyFile=${certRootDir}/private/intermediate.key.pem
-certFile=${certRootDir}/certs/intermediate.cert.pem
+keyFile=${certIntermediateDir}/private/intermediate.key.pem
+certFile=${certIntermediateDir}/certs/intermediate.cert.pem
 csrFile=${certIntermediateDir}/csr/intermediate.csr.pem
 if [ -e $certFile ]
 then
