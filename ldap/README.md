@@ -11,5 +11,10 @@ sudo systemctl enable slapd
 sudo dpkg-reconfigure slapd   # follow the questions in the page provided at the top of this readme.
 ```
 
-The configuration files for ldap are in `/etc/ldap/ldap.conf`
+The configuration files for ldap are in `/etc/ldap/ldap.conf`. Make the modifications it states about BASE and URI.
 
+Verify configuration with
+```bash
+ldapsearch -x
+```
+You should now be able to connect using the `admin` user for binding.
