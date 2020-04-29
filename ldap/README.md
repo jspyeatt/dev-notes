@@ -1,6 +1,6 @@
 # LDAP
 
-A lot of this is based on https://likegeeks.com/linux-ldap-server/
+A lot of this is based on https://www.linuxbabe.com/ubuntu/install-configure-openldap-server-ubuntu-16-04
 
 ## Installation
 
