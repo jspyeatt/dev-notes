@@ -154,6 +154,18 @@ git push origin feature/inbound-cap
 git log        # get the commit_sha number you want to go back to.
 git reset --hard commit_sha
 ```
+### Undo a Merge that was committed to remote repo.
+Occasionally you really screw something up and merge a dev branch into your master on the remote server
+when you didn't mean to. So to undo this, you need to find the last good commit in master, hard reset it,
+and push the change. This will wipe out all subsequent changes in your master.
+
+```bash
+git checkout master
+git log             # find the SHA of the last good commit to master.
+git reset --hard SHA_OF_LAST_GOOD_MASTER_COMMIT   # reset the master branch to the last good commit.
+git push -f origin master  # push your master change back to the remote repo.
+```
+
 ### Test for Merge Conflicts without Committing in the First Place
 Checking for conflicts when merging from devBranch into rootBranch.
 ```
