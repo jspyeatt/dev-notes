@@ -20,6 +20,8 @@ ldapsearch -x
 You should now be able to connect using the `admin` user for binding.
 
 ## Configuring for Secure Connections
+ldap:// + StartTLS should go to port 389. ldaps:// should be directed at port 636.
+
 [Based on this](https://www.openldap.org/doc/admin24/tls.html)
 
 This seems to be complicated. But here it goes. The configuration file is in `/etc/ldap/ldap.conf`.
@@ -37,5 +39,5 @@ the directory must be managed by `openssh c_rehash`.
 
 `TLSCertificateFile` should contain the server's certificate
 
-`TLSCertificateKeyFile` should contain the server certificate's private key.
+`TLSCertificateKeyFile` should contain the server certificate's private key. This needs to be `chmod 400` for the user who runs slapd.
 
