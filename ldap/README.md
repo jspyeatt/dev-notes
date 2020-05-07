@@ -20,6 +20,46 @@ ldapsearch -x
 You should now be able to connect using the `admin` user for binding.
 
 ## Configuring for Secure Connections
+As expected this is really confusing.
+
+Here's what I did.
+
+Put the following scripts into /etc/ldap/my-certs
+
+1. ca.cert.pem
+1. ca.key.pem
+1. intermediate.cert.pem
+1. intermediate.key.pem
+1. jspyeatt-ldap.singlewire.com.cert.pem
+1. jspyeatt-ldap.singlewire.com.key.pem
+
+I concatenated `cat intermediate.cert.pem ca.cert.pem > merge-ca-public-certs.pem`
+
+Then created addcerts.ldif
+```
+dn: cn=config
+changetype: modify
+add: olcTLSCACertificateFile
+olcTLSCACertificateFile: /etc/ldap/my-certs/merged-ca-public-certs.pem
+
+add: olcTLSCertificateFile
+olcTLSCertificateFile: /etc/ldap/my-certs/jspyeatt-ldap.singlewire.com.cert.pem
+
+add: olcTLSCertificateKeyFile
+olcTLSCertificateKeyFile: /etc/ldap/my-certs/jspyeatt-ldap.singlewire.com.key.pem
+```
+
+and ran
+```bash
+sudo ldapmodify -H ldapi:// -Y EXTERNAL -f /etc/ldap/my-certs/addcerts.ldif
+```
+Edited /etc/default/slapd to read
+```
+SLAPD_SERVICES="ldap:/// ldapi:/// ldaps:///"
+```
+
+sudo /etc/init.d/slapd restart
+
 ldap:// + StartTLS should go to port 389. ldaps:// should be directed at port 636.
 
 [Based on this](https://www.openldap.org/doc/admin24/tls.html)
