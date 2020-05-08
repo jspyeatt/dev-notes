@@ -61,7 +61,16 @@ ssl start_tls
 ssl on
 ```
 
-You should now be able to use port 389 for StartTLS.
+Edit /etc/default/sldapd and make certain you have the line
+```
+SLAPD_SERVICES="ldap:/// ldapi:/// ldaps:///"
+```
+Restart slapd
+```bash
+sudo /etc/init.d/slapd restart
+```
+
+You should now be able to use port 389 for StartTLS and 636 for ldaps.
 
 ## Configuring for Secure Connections
 https://computingforgeeks.com/secure-ldap-server-with-ssl-tls-on-ubuntu/
