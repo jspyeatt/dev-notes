@@ -19,7 +19,7 @@ ldapsearch -x
 ```
 You should now be able to connect using the `admin` user for binding.
 
-## Configuring for Secure Connection - Self Signed
+## Configuring for StartTLS Connection - Self Signed
 Configuring openldap for secure connections is astonishingly hard if you have a trust chain. If you have a 
 self-signed certificate, it isn't quite so bad.
 
@@ -60,6 +60,8 @@ TLS_REQCERT allow
 ssl start_tls
 ssl on
 ```
+
+You should now be able to use port 389 for StartTLS.
 
 ## Configuring for Secure Connections
 https://computingforgeeks.com/secure-ldap-server-with-ssl-tls-on-ubuntu/
