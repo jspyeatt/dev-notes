@@ -20,6 +20,7 @@ ldapsearch -x
 You should now be able to connect using the `admin` user for binding.
 
 ## Configuring for Secure Connections
+https://computingforgeeks.com/secure-ldap-server-with-ssl-tls-on-ubuntu/
 As expected this is really confusing.
 
 Here's what I did.
