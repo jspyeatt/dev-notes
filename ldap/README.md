@@ -19,7 +19,7 @@ ldapsearch -x
 ```
 You should now be able to connect using the `admin` user for binding.
 
-## Configuring for StartTLS Connection - Self Signed
+## Configuring for StartTLS and LDAPS Connection - Self Signed
 Configuring openldap for secure connections is astonishingly hard if you have a trust chain. If you have a 
 self-signed certificate, it isn't quite so bad.
 
