@@ -19,6 +19,48 @@ ldapsearch -x
 ```
 You should now be able to connect using the `admin` user for binding.
 
+## Configuring for Secure Connection - Self Signed
+Configuring openldap for secure connections is astonishingly hard if you have a trust chain. If you have a 
+self-signed certificate, it isn't quite so bad.
+
+Create the self-signed cert. specify the FQDN name of the server for the common name when asked
+
+```bash
+cd /etc/ldap/sasl2
+sudo openssl req -x509 -nodes -days 99999 -newkey rsa:2048 -keyout mysitename.key -out mysitename.crt
+sudo chown openldap /etc/ldap/sasl2/mysitename.key /etc/ldap/sasl2/mysitename.crt
+sudo chmod 640 /etc/ldap/sasl2/mysitename.key
+```
+Create the ldif file we will use to change the configuration of openldap.
+```
+dn: cn=config
+changetype: modify
+add: olcTLSCACertificateFile
+olcTLSCACertificateFile: /etc/ldap/sasl2/ca-certificates.crt
+-
+replace: olcTLSCertificateFile
+olcTLSCertificateFile: /etc/ldap/sasl2/mysitename.crt
+-
+replace: olcTLSCertificateKeyFile
+olcTLSCertificateKeyFile: /etc/ldap/sasl2/mysitename.key
+
+```
+Now, with openldap running run the new configuration.
+
+```bash
+sudo ldapmodify -Y EXTERNAL -H ldapi:/// -f ldap_ssl_self.ldif
+```
+
+Now modify /etc/ldap/ldap.conf to look something like this.
+```
+BASE dc=singlewire,dc=com
+URI ldap://jspyeatt-ldap.singlwire.com
+TLS_CERT /etc/ssl/certs/ca-certificates.crt
+TLS_REQCERT allow
+ssl start_tls
+ssl on
+```
+
 ## Configuring for Secure Connections
 https://computingforgeeks.com/secure-ldap-server-with-ssl-tls-on-ubuntu/
 As expected this is really confusing.
