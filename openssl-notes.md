@@ -41,3 +41,30 @@ verify the trust chain.
 ```bash
 openssl verify -CAfile root-ca.pem child-cert.pem
 ```
+
+## Create your own Root CA and Server certificate
+
+### Generate Root CA private key
+```bash
+openssl genrsa -nodes -out ca.key 4096
+```
+### Sign the Root CA certificate
+```bash
+openssl req -x509 -new -nodes -key ca.key -sha256 -days 3650 -out ca.crt -subj "/C=US/ST=WI/O=Dummy Org/CN=Fake Root CA"
+```
+### Create the Server private key
+```bash
+openssl genrsa -nodes -out mysite.key 4096
+```
+### Create the CSR for the Server
+```bash
+openssl req -new -sha256 -key mysite.key  -subj "/C=US/ST=WI/O=Dummy Org/CN=Fake Root CA/CN=jspyeatt.singlewire.com" -out mysite.csr
+```
+### Verify the CSR's Content
+```bash
+openssl req -in mysite.csr -noout -text
+```
+### Sign the CSR to Create the Server Certificate
+```bash
+openssl x509 -req -in mysite.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out mysite.crt -days 3650 -sha256
+```
