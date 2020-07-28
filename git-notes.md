@@ -329,6 +329,15 @@ git branch --all     # lists all branches including remotes
 
 ### git commit
 
+#### changing a commit message.
+If you want to change the commit message of the last commit of your local repo you can do a 
+```
+git commit --amend
+```
+That's the easy one.
+
+If you need to change a commit message on a commit other than HEAD you need to do an interact rebase. [https://linuxize.com/post/change-git-commit-message/](Here it is explained). 
+
 ### git diff
 
 #### git diff - give summary
