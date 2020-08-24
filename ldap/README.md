@@ -1,6 +1,6 @@
 # LDAP
 
-A lot of this is based on https://www.linuxbabe.com/ubuntu/install-configure-openldap-server-ubuntu-16-04
+A lot of this is based on https://www.linuxbabe.com/ubuntu/install-configure-openldap-server-ubuntu-16-04 and this https://askubuntu.com/questions/936382/openldap-error-configuring-starttls-ldap-modify-other-e-g-implementation-sp
 
 ## Installation
 
@@ -19,7 +19,7 @@ ldapsearch -x
 ```
 You should now be able to connect using the `admin` user for binding.
 
-## Configuring for StartTLS and LDAPS Connection - Self Signed
+## Configuring for StartTLS and LDAPS Connection - Self Signed with CA
 Configuring openldap for secure connections is astonishingly hard if you have a trust chain. If you have a 
 self-signed certificate, it isn't quite so bad.
 
@@ -37,14 +37,16 @@ dn: cn=config
 changetype: modify
 add: olcTLSCACertificateFile
 olcTLSCACertificateFile: /etc/ldap/sasl2/ca-certificates.crt
--
-replace: olcTLSCertificateFile
-olcTLSCertificateFile: /etc/ldap/sasl2/mysitename.crt
+
+# It seems to be important that you do the private key first.
 -
 replace: olcTLSCertificateKeyFile
 olcTLSCertificateKeyFile: /etc/ldap/sasl2/mysitename.key
-
+-
+replace: olcTLSCertificateFile
+olcTLSCertificateFile: /etc/ldap/sasl2/mysitename.crt
 ```
+
 Now, with openldap running run the new configuration.
 
 ```bash
