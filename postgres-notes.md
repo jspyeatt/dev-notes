@@ -29,6 +29,10 @@ select created_at, secs_to_next_beat, extract(epoch from now() - created_at)/360
 ```
 alter user <username> with password 'newpassword';
 ```
+### Requiring no password
+To do this you need to go into the pg_hba.conf file and change all the columns on the right side to `trust`.
+After this you need to restart the postgres server.
+
 ### pg_dump
 pg_dump has several options. The most common ones are:
 ```
