@@ -27,9 +27,13 @@ When the authorization server issues the grant, it needs to know where to send t
 ### Access Token
 The thing the client really needs to hit the API.
 
-## Actual auth flow
+## Actual auth flow for Response Type (Code).
 This example flow will give the scenario where yelp wants a user to give them access to the user's contacts on google.
 
 1. Yelp wants access to your contacts so it provides a button "grant permissions".
 1. The button is a link to accounts.google.com (the authorization server). The link also includes the redirect URI yelp.com/callback with a response type of `Code` (Code is what type of authorization grant the application wants).
-1. 
+1. The user clicks on the "grant permissions"
+1. The authorization server asks the user to log in.
+1. Upon successful login the authorization server redirects back to the redirect URI (yelp.com/callback) with an authorization code. The client can't really do much with the authorization code. 
+1. The only thing the application can do with the authorization code is make a call back to the authorization server with the authorization code and ask for an access token.
+
