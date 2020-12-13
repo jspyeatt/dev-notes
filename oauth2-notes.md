@@ -47,13 +47,13 @@ This example flow will give the scenario where yelp wants a user to give them ac
 
 1. Yelp wants access to your contacts so it provides a button "grant permissions".
 1. The button is a link to accounts.google.com (the authorization server). The link also includes the redirect URI yelp.com/callback with a response type of `Code` (Code is what type of authorization grant the application wants). The link will also include a list of `scopes` which are the permissions the yelp
-application wants. (read-contacts).
+application wants. (read-contacts). ex. `https://accounts.google.com/o/oauth2/v2/auth?client_id=abc123&redirect_uri=https://yelp.com/callback&scope=profile,read-contacts&response_type=code&state=foobar`
 1. The user clicks on the "grant permissions"
 1. The authorization server asks the user to log in.
 1. The authorization server then prompts the user to ask "This is the list of scopes yelp wants access to. Is this OK?" (Consent)
-1. Upon successful login and consent the authorization server redirects back to the redirect URI (yelp.com/callback) with an authorization code. The client can't really do much with the authorization code. 
+1. Upon successful login and consent the authorization server redirects back to the redirect URI (https://yelp.com/callback?code=38947hds05&state=foobar) with an authorization code `38947hds05`. If the user denies access the callback url will be something like `https://yelp.com/callback?error=access_denied&error_description=User did not consent.`
 1. The only thing the application can do with the authorization code is make a call back to the authorization server with the authorization code and exchange it for an access token.
-1. So the application asks the authorization server to exchange the authorization code for an access token. The authorization server verifies the authorization token. And provides an access token.
+1. So the application asks the authorization server to exchange the authorization code for an access token. The authorization server verifies the authorization token. And provides an access token. The request is going to be a POST. For example in google it will include `www.googleapis.com/oauth2/v4/token` with `Content-type: application/x-www-form-urlencoded` and a payload of `code=38947hds05&client_id=abc123&client_secret=YOURSECRET&grant_type=authorization_code`.
 1. Once the application has that access token it is authorized to grab data (contacts) from the resource server using the access token. The resource server recognizes the access token and understands the application is asking for data on behalf of the client (the user).
 
 There is a specific reason we get the authorization code and have to ask again for the access token. In networking there are Back Channel (very secure) communications and Front Channel (less secure) communications. An example of a back channel communication would be from your application server to google. This
