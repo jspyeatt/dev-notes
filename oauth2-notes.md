@@ -12,7 +12,16 @@ It's the application that wants access to the resource owner's data.
 ### Authorization Server
 It's the server who has the authority to give the client permission to the data after the resource owner has said it's ok. So the resource owner uses this
 service to verify the owner is who they say they are (via login/password). The authorization server then can ask the resource owner, "hey, this application
-wants to access your contacts. Is that OK?". Authorization servers can be google, facebook, twitter, whatever can be used for granting access.
+wants to access your contacts. Is that OK?". Authorization servers can be google, facebook, twitter, whatever can be used for granting access. The request is going to look something like this:
+
+```
+https://accounts.google.com/o/oauth2/v2/auth?client_id=abc123&redirect_uri=https://yelp.com/callback&scope=profile,read-contacts&response_type=code&state=foobar
+```
+Here's the most important part of this to understand. For yelp to use google for authorization yelp must have done a one-time registration with google basically
+say "I have this app, and I want to use it to access your APIs". Google then uses this registration and gives yelp two values. `client_id` which you see above
+and `client_secret` which is ONLY used by yelp's backend server when it exchanges an authorization code for an access token. So the client_id is public
+because it actually appears on the above URL. But the client_secret is private to ensure an authorization code cannot be highjacked by some other party because
+they don't have the client_secret.
 
 ### Scopes
 This is the list of possible permissions an authorization server makes available. For example read-contacts, add-contacts, delete-contacts, read-calendar are all different scopes.
@@ -28,7 +37,7 @@ Is the thing that proves the resource owner is who they say they are and they ha
 it wants. This grant is issued by the authorization server.
 
 ### Redirect URI
-When the authorization server issues the grant, it needs to know where to send this grant once approved. This is the redirect URI or callback.
+When the authorization server issues the grant, it needs to know where to send this grant once approved. This is the redirect URI or callback. 
 
 ### Access Token
 The thing the client really needs to hit the API.
@@ -46,7 +55,6 @@ application wants. (read-contacts).
 1. The only thing the application can do with the authorization code is make a call back to the authorization server with the authorization code and exchange it for an access token.
 1. So the application asks the authorization server to exchange the authorization code for an access token. The authorization server verifies the authorization token. And provides an access token.
 1. Once the application has that access token it is authorized to grab data (contacts) from the resource server using the access token. The resource server recognizes the access token and understands the application is asking for data on behalf of the client (the user).
-
 
 There is a specific reason we get the authorization code and have to ask again for the access token. In networking there are Back Channel (very secure) communications and Front Channel (less secure) communications. An example of a back channel communication would be from your application server to google. This
 is back channel because everything is communicated in https. A front channel example would be from your browser to an application server which may not be as secure. So the task that gives you the authorization code (login, consent screen and redirect back to brower) is all front channel communications. The exchange of the authorization code for the access token is back channel. The back channel exchange actually happens between the application server and the authorization server. It's not actually done by the browser. The application server has a secret key.
