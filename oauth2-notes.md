@@ -1,6 +1,9 @@
 # Oauth2 notes
 These notes are based on [this video](https://www.youtube.com/watch?v=996OiexHze0).
 
+Special note. Oauth2 was designed for authorization, not authentication. Oauth2 should not be used for authentication. Using it for authentication is bad because
+there is no standard way of getting the user's information (What's your name, email etc...). Every implementation is a bit different. No common set of scopes.This was a common misuse pre-2014. OpenId Connect was invented for. See bottom.
+
 ## Terminology
 
 ### Resource Owner
@@ -73,3 +76,17 @@ Back channel only, there is no browser.
 
 ### Client credentials
 Back channel only, there is no browser. Your application server posting directly to the api service.
+
+## OpenId Connect
+OpenID Connect is for authentication, while oauth2 is for authorization. OpenID is really just an extra layer on top of oauth2 from an implementation perspective.
+
+OpenID adds:
+1. ID token - 
+1. UserInfo endpoint for getting more user information after you've gotten the id token.
+1. Standard set of scopes
+1. Standarized implementation
+
+### OpenID Connect flow
+This piggybacks off the oauth2 flow. When you make a request the only difference is your scope parameter you specify `openid`. Eventually, when your application
+exchanges its authorization code with the authorization server the auth server will respond with an access token AND an ID token (JWT). If you subsequently need to get
+more information of the user you can hit the `/userinfo` endpoint with the access_token. 
