@@ -35,5 +35,6 @@ This example flow will give the scenario where yelp wants a user to give them ac
 1. The user clicks on the "grant permissions"
 1. The authorization server asks the user to log in.
 1. Upon successful login the authorization server redirects back to the redirect URI (yelp.com/callback) with an authorization code. The client can't really do much with the authorization code. 
-1. The only thing the application can do with the authorization code is make a call back to the authorization server with the authorization code and ask for an access token.
-
+1. The only thing the application can do with the authorization code is make a call back to the authorization server with the authorization code and exchange it for an access token.
+1. So the application asks the authorization server to exchange the authorization code for an access token. The authorization server verifies the authorization token. And provides an access token.
+1. Once the application has that access token it is authorized to grab data (contacts) from the resource server using the access token. The resource server recognizes the access token and understands the application is asking for data on behalf of the client (the user).
