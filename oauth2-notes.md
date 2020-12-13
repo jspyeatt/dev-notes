@@ -4,6 +4,8 @@ These notes are based on [this video](https://www.youtube.com/watch?v=996OiexHze
 Special note. Oauth2 was designed for authorization, not authentication. Oauth2 should not be used for authentication. Using it for authentication is bad because
 there is no standard way of getting the user's information (What's your name, email etc...). Every implementation is a bit different. No common set of scopes.This was a common misuse pre-2014. OpenId Connect was invented for. See bottom.
 
+developer.octa.com you can create a free developer account and can you can create an authorization server in the cloud for free.
+
 ## Terminology
 
 ### Resource Owner
@@ -64,6 +66,16 @@ is back channel because everything is communicated in https. A front channel exa
 
 ## Different Authorization Flows
 The above flow is the 'Authorization code' flow. It uses front and back channels.
+
+Which grant types to use: 
+
+For web applications with server backend use authorization code flow.
+
+For Native mobile app: authorization code flow with PKCE (proof code for key exchange).
+
+For javascript app (single page app) with API backend: implicit flow
+
+For Microservices and APIs: client credentials flow.
 
 ### Implicit Flow
 Uses front channel only. This is used when you don't have a back channel. This might occur if you have a pure javascript application which has no backend server.
