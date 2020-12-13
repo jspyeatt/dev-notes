@@ -1,4 +1,4 @@
-# Oauth2 notes
+# Oauth2 and OpenID Connect notes
 These notes are based on [this video](https://www.youtube.com/watch?v=996OiexHze0).
 
 Special note. Oauth2 was designed for authorization, not authentication. Oauth2 should not be used for authentication. Using it for authentication is bad because
