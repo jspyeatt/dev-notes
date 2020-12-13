@@ -15,7 +15,7 @@ service to verify the owner is who they say they are (via login/password). The a
 wants to access your contacts. Is that OK?". Authorization servers can be google, facebook, twitter, whatever can be used for granting access.
 
 ### Scopes
-This is the list of possible permissions an authorization server makes available. For example read-contacts, add-contacts, delete-contacts are all different scopes.
+This is the list of possible permissions an authorization server makes available. For example read-contacts, add-contacts, delete-contacts, read-calendar are all different scopes.
 
 ### Consent
 Once the user has successfully logged in to the authorization server, the server presents a consent page to the user asking for permission to the various scopes the application asked for.
@@ -46,3 +46,7 @@ application wants. (read-contacts).
 1. The only thing the application can do with the authorization code is make a call back to the authorization server with the authorization code and exchange it for an access token.
 1. So the application asks the authorization server to exchange the authorization code for an access token. The authorization server verifies the authorization token. And provides an access token.
 1. Once the application has that access token it is authorized to grab data (contacts) from the resource server using the access token. The resource server recognizes the access token and understands the application is asking for data on behalf of the client (the user).
+
+
+There is a specific reason we get the authorization code and have to ask again for the access token. In networking there are Back Channel (very secure) communications and Front Channel (less secure) communications. An example of a back channel communication would be from your application server to google. This
+is back channel because everything is communicated in https. A front channel example would be from your browser to an application server which may not be as secure. So the task that gives you the authorization code is front channel communications. The exchange of the authorization code for the access token is back channel.
