@@ -364,7 +364,13 @@ git fetch --all    # fetches all remote branches.
 
 ### git init - Create a Repository in your Current Directory
 
-### git log
+### git log and git show
+
+#### List files changed for a particular commit
+
+```
+git show --name-only SHA
+```
 
 #### Find Which commits modified a file
 
