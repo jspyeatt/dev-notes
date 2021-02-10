@@ -499,3 +499,86 @@ git revert <hash found in git log>
 This will prompt you like any other commit. It's done like this so you don't lose history.
 
 ## Useful Links
+
+
+## Git Notes from Udemy Training
+git config --global user.name "John Pyeatt"
+git config --global user.email "jspyeatt@gmail.com"
+git config --global --list
+
+git init fresh-project   # creates a folder called fresh-project and sets up git.
+git init .   # initializes the current folder to be managed by git
+rm -rf .git  # removes the actual local repo from the directory. Your actual project files should still there.
+
+A git fork is creating a copy of somebody elses repo into your own account.
+
+global git config file in $HOME/.gitconfig
+
+git ls-files  # lists all the files git is tracking.
+
+git reset HEAD <filename>  # moves the file out of staging and back into the working directory.
+
+git log --oneline --graph --decorate
+
+git log --all --graph --decorage --oneline
+
+git log 347abc..5439bcd
+
+git log --since="3 days ago"
+
+git log -- <filename>   # commits that include the specific file.
+
+git log --follow -- <filename>   # follows renames of file.
+
+git show SHA_VALUE   # shows the commit id, along with the diff of what changed in that commit.
+
+git commit --amend   # allows you to amend the comment in your last commit.
+# creating alias
+git config --global alias hist "log --all --graph --decorate --oneline"
+git hist
+
+git diff README.md  # compares working directory with staging area
+git diff HEAD README.md  # compares working directory with local repo
+git diff --staged HEAD README.md  # compares staged area with local repo
+git diff HEAD HEAD^   # compares last commit with second last commit
+git diff master origin/master # compare local repo versus remote for master branch.
+
+
+git branch -a   # lists local and remote branches
+
+
+git pull --rebase origin master  # merges in changes from origin/master as a rebase instead of merge.
+
+git stash save
+git stash apply   # brings back the stashed files, but leaves them in the stash state as well.
+git stash drop    # removes the stashed fiels from the stash state.
+
+git stash -u  # just like git stash save except it will also stash untracked files.
+git stash save "my custom stash message"
+git stash show stash@{1} # shows the details of the second stash.
+git stash apply stash@{1}  # applies the second stash back to your working directory.
+git stash drop stash@{1}  # drop second stash
+git stash clear  # drops all stashes.
+git stash branch feature/newbranch  # creates a new branch, changes to that branch and pops your stashes into the new branch.
+
+git tag myTag   # creates a lightweight tag on a current commit.
+git tag --list  # lists the tags
+git show myTag # shows commit details at that tag
+git tag --delete myTag  # deletes the tag
+
+# annotated tag is a lightweight tag with some added info
+git tag -a v-1.0   # creates an annotated tag. It will prompt you for a message to associate to the tag.
+git show v-1.0  # lists the annotation.
+git tag -a v0.9 86954bdf3    # annotation tag a specific commit
+git push origin v0.9  # pushes a tag to the remote repo
+git push origin master --tags  # does a regular push and makes certain all tags are pushed as well.
+
+
+# resetting
+git reset HEAD^2  # backup 2 commits
+git reset HEAD^^  # backup 2 commits
+git reflog    # lists what you've done on reset. good way to see all your commits you've backed off from.
+
+# cherry pick
+git checkout feature/mybranch
+git cherry-pick 493fde    # will pull in a specific commit (493fde) from another branch into feature/mybranch
