@@ -33,6 +33,10 @@ alter user <username> with password 'newpassword';
 To do this you need to go into the pg_hba.conf file and change all the columns on the right side to `trust`.
 After this you need to restart the postgres server.
 
+This entry will allow everyone to log in with no password.
+```
+host    all             all             0.0.0.0/0               trust
+```
 ### pg_dump
 pg_dump has several options. The most common ones are:
 ```
