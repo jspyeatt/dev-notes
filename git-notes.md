@@ -600,3 +600,11 @@ git reflog    # lists what you've done on reset. good way to see all your commit
 git checkout feature/mybranch
 git cherry-pick 493fde    # will pull in a specific commit (493fde) from another branch into feature/mybranch
 ```
+
+## Trick commands
+
+### List the files committed most often
+
+```
+git log --pretty=format: --name-only | sort | uniq -c | sort -rg | head -10
+```
