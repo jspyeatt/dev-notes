@@ -605,6 +605,8 @@ git cherry-pick 493fde    # will pull in a specific commit (493fde) from another
 
 ### List the files committed most often
 
+You could also throw a --since="2021-08-21" to see only commits since Aug 21.
+
 ```
 git log --pretty=format: --name-only | sort | uniq -c | sort -rg | head -10
 ```
